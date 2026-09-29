@@ -1,0 +1,410 @@
+M5 Forecasting - Accuracy：参赛者内存问题与本机方案总结
+
+一、核心结论
+
+M5 Forecasting - Accuracy
+的内存压力确实是当年参赛者普遍遇到的主要工程瓶颈之一，而不是个别机器的偶发现象。
+
+当前本机环境约为： - WSL2 / Ubuntu 24.04 - WSL RAM：约 10 GB - Swap：6
+GB - Python：3.10（m5 conda 环境） - pandas：2.3.3 - LightGBM：4.7.0 -
+M5 数据和项目位于 E 盘，通过 /mnt/e/… 访问
+
+这套配置足以完成正规的 M5 LightGBM pipeline，但不适合不加控制地把全部约
+5900 万行长表和大量 lag / rolling 特征一次性放进内存。正确方向是：dtype
+优化、按 store 拆分、特征/中间结果落盘、及时释放内存，并给 LightGBM
+训练阶段保留足够余量。
+
+二、16GB 内存参赛者的直接反馈
+
+公开参赛方案中，Christophe Nicault 将 M5 的 30,490 条 item-store
+序列按约 1,941 天展开后，得到：
+
+59,181,090 observations
+
+他原本计划训练覆盖所有序列的全局模型，但在 16GB RAM 的笔记本以及 Kaggle
+Kernel 环境中很快遇到内存限制。
+
+其公开总结指出，在完整数据上只能创建少量新特征，就会超过内存限制。
+
+这说明： - 原始约 5900 万行并不是内存问题的终点。 - 真正危险的是继续添加
+lag、rolling、calendar、price 等大量特征。 - 即使 16GB
+RAM，也不能简单认为可以把完整长表和全部特征一次性放进内存。
+
+该方案后来采用了类似以下思路：
+
+全量约 59M rows ↓ 不一次性全部训练 ↓ 按 store_id 拆分 ↓ 分别训练多个模型
+↓ 一次只处理一个 store ↓ 中间数据/特征写入磁盘 ↓ 释放 RAM ↓ 处理下一个
+store
+
+这与当前机器适合采用的策略高度一致。
+
+三、Kaggle 参赛者专门总结的 Memory 问题
+
+Kaggle M5 的公开讨论中，有参赛者专门把 Memory 作为工程问题总结。
+
+常见建议包括： - careful dtype conversion（谨慎选择 dtype） - 按 state
+或 store 拆分训练 - 交叉验证时进行适当 subsampling - 临时 DataFrame
+写入硬盘 - 特征和模型落盘 - 删除不再使用的对象 - 控制特征数量
+
+一个尤其重要的问题是：
+
+即使 pandas 阶段的数据刚好能够塞进 RAM，也不代表 LightGBM
+一定能够正常开始训练。
+
+LightGBM 在构建 Dataset、binning
+和训练过程中还需要额外工作内存，因此训练开始时可能再次出现内存峰值。
+
+所以不能把 10GB RAM 理解成“可以让 DataFrame 本身占到接近 10GB”。
+
+四、其他 16GB 参赛者的类似处理方式
+
+另一个公开 M5 方案的作者使用约 16GB RAM
+的电脑，并明确提到该比赛的数据处理非常吃内存。
+
+其处理方式包括： - 将数据拆分 - 针对不同 product /
+数据块建立独立数据文件 - 使用 HDF 等磁盘格式保存中间数据 -
+避免始终从巨大 CSV 重新处理全部数据
+
+公开项目说明中还提到，处理过程中的数据规模可以超过机器本身的 16GB
+RAM，因此不得不依靠拆分和磁盘中间结果来完成计算。
+
+这进一步说明 M5 的内存问题并不是单一方案特有。
+
+五、普通参赛者也频繁遇到内存墙
+
+Kaggle Discussion 中还有参赛者在 merge M5
+数据后达到四千多万行，发现本地电脑难以继续处理。
+
+转移到 Google Colab 后继续计算，也可能因为内存耗尽而崩溃。
+
+其他参赛者通常给出的解决方案包括： - reduce_mem_usage - 调整 dtype -
+分块处理 - 使用磁盘中间文件 - 或使用更大 RAM 的云 VM
+
+还有讨论直接将“内存过大”列为 M5 首要问题之一，并建议： - 修改 dtype -
+分阶段处理 - 保存处理结果 - 重新启动 kernel / process 后继续下一阶段
+
+因此 M5 更像一个“数据工程 + 特征工程 + 模型”的综合问题，而不是单纯调用
+LightGBM 即可。
+
+六、为什么 M5 特别容易吃爆内存
+
+M5 原始销售数据是宽表。
+
+大约： 30,490 条 item-store 序列 × 约 1,941 天
+
+转换成长表后：
+
+30,490 × 1,941 ≈ 59,181,090 行
+
+也就是接近 5900 万行。
+
+七、单个数值特征的内存成本
+
+如果一个特征使用 float64：
+
+59,181,090 × 8 bytes ≈ 473 MB
+
+也就是说，一个完整覆盖约 5900 万行的 float64 特征，理论裸数据就接近
+0.47GB。
+
+假设创建如下特征：
+
+lag_28 lag_29 lag_30 lag_35 lag_42
+
+rolling_mean_7 rolling_mean_14 rolling_mean_28 rolling_std_7
+rolling_std_28
+
+price price_change 以及更多时间/价格/统计特征
+
+如果最终有 20 个 float64 数值特征：
+
+约 473 MB × 20 ≈ 9.5 GB
+
+这还没有计算： - 原始 demand - item_id - dept_id - cat_id - store_id -
+state_id - calendar features - DataFrame/index 开销 - groupby 临时对象 -
+merge 临时对象 - shift 临时数组 - rolling 临时数组 - LightGBM Dataset -
+LightGBM binning - LightGBM 训练工作内存
+
+因此 10GB WSL RAM 绝不能理解成可以安全容纳接近 10GB 的 pandas
+DataFrame。
+
+八、dtype 优化为什么非常重要
+
+同样一个覆盖约 5900 万行的特征：
+
+float64： 约 59M × 8 bytes ≈ 473 MB
+
+float32： 约 59M × 4 bytes ≈ 237 MB
+
+一个特征就可以节省约 236MB。
+
+如果有 10 个类似特征，仅理论底层数组就可能节省约：
+
+2.36 GB
+
+因此 dtype 优化在 M5 中不是微小优化，而可能直接决定程序能不能运行。
+
+对于类别列同样如此。
+
+不应该让约 5900 万行反复保存大量 Python/object 字符串，例如：
+
+FOODS_1_001 FOODS_1_002 CA_1 CA_2 …
+
+应该优先考虑： - pandas category - 整数编码 - 更小的整数 dtype
+
+销售量、价格和派生特征也应根据取值范围尽量使用： - uint8 / uint16 /
+int16 / int32 - float32
+
+而不是无脑使用 int64 / float64。
+
+九、真正危险的是特征工程，而不只是读取 CSV
+
+读取 sales_train_evaluation.csv 本身通常不是最大的困难。
+
+真正危险的流程是：
+
+read CSV ↓ melt ↓ 约 59M rows ↓ merge calendar ↓ merge sell_prices ↓
+groupby ↓ shift ↓ rolling ↓ 更多 rolling / lag ↓ 构建 LightGBM Dataset ↓
+LightGBM 训练
+
+例如：
+
+df[“lag28”] = df.groupby(“id”)[“sales”].shift(28)
+
+以及 rolling mean / rolling std 等操作。
+
+pandas 在执行 groupby、merge、shift、rolling
+等操作时，内存中不一定只存在“原 DataFrame +
+新的一列”，还可能创建临时数组、索引和副本。
+
+因此可能出现：
+
+平时 RAM：7.2 GB ↓ groupby / merge ↓ 9.4 GB ↓ 临时 copy ↓ 达到 10 GB ↓
+开始大量使用 swap ↓ 系统极度变慢
+
+此时用户可能误认为 LightGBM 或 pandas
+算法特别慢，实际上系统可能正在频繁进行 RAM 与 SSD swap 之间的数据交换。
+
+十、当前 10GB WSL 环境适合做到什么程度
+
+对于当前约 10GB RAM + 6GB swap 的 WSL 环境，可以大致这样理解：
+
+1.  简单 baseline 结论：完全可行。
+
+2.  单 store LightGBM 结论：非常适合。
+
+3.  按 store 训练完整 pipeline 结论：推荐。
+
+4.  按 state 拆分 结论：可以尝试，但需要继续关注内存峰值。
+
+5.  全部约 5900 万行 + 少量经过优化的特征
+    结论：可以实验，但必须非常谨慎。
+
+6.  全部约 5900 万行 + 大量 lag / rolling 特征
+    结论：不推荐在当前配置下一次性处理。
+
+7.  把全部特征一次性塞入 LightGBM 结论：不推荐。
+
+8.  复现较复杂的高分方案
+    结论：可以尝试，但必须采用工程化拆分、磁盘缓存和内存控制。
+
+十一、推荐的低内存 M5 Pipeline
+
+不建议第一步就把完整 M5 数据 melt 成约 5900 万行，然后不停增加特征。
+
+更稳妥的结构是：
+
+M5 原始数据 │ ├── sales ├── calendar └── sell_prices │ ↓ dtype 优化 │ ↓
+按 store 切分 │ ├── CA_1 ├── CA_2 ├── … ├── TX_x └── WI_x │ ↓ 针对单个
+store 转 long format │ ↓ merge calendar / price │ ↓ 创建 lag / rolling /
+calendar / price features │ ↓ LightGBM │ ↓ 保存模型和预测结果 │ ↓ del
+大型 DataFrame ↓ gc.collect() │ ↓ 处理下一个 store
+
+这样一次内存里只保留总数据的一部分。
+
+由于 M5 有多个 store，将全局数据按 store
+拆开后，每次处理的数据规模大约只有完整数据的一部分，因此对 10GB RAM
+会友好得多。
+
+十二、磁盘缓存策略
+
+项目位于 E
+盘，因此可以充分利用磁盘空间保存中间结果，而不是为了省磁盘反复消耗 RAM。
+
+推荐目录结构例如：
+
+m5-forecasting/ ├── data/ │ ├── raw/ │ ├── processed/ │ └── features/
+├── src/ ├── models/ ├── output/ └── logs/
+
+原始 CSV 保存在 data/raw。
+
+经过 dtype 优化和拆分的数据，可以保存为： - Parquet -
+Feather（视需求） - 其他适合快速读取的列式格式
+
+例如：
+
+data/processed/CA_1.parquet data/processed/CA_2.parquet …
+data/features/CA_1_features.parquet
+
+这样如果训练失败，不需要从原始 CSV 重新执行完整 melt + merge + feature
+engineering。
+
+【本项目实际口径 · 重要】上面的 Parquet / Feather / data/raw / data/features
+只是通用低内存建议，本项目为兼容官方 A1 脚本并不采用。A1 复现实际落盘格式是
+pickle，不是 Parquet：
+
+- 分店特征写入 data/processed/{store}/ 下每店 5 个 pickle
+  （grid_part_1.pkl、grid_part_2.pkl、grid_part_3.pkl、lags_df_28.pkl、
+  mean_encoding_df.pkl），共 10 店 × 5 = 50 个文件；
+- 递归测试网格 data/processed/test_{store}[_{cat}|_{dept}].pkl；
+- 模型 models/*.bin（pickle 序列化）；
+- 原始 CSV 就地保留在 data/，不迁移到 data/raw/。
+
+即“按 store 拆分 + 中间结果落盘 + 及时释放 RAM”的内存纪律照常执行，但落盘
+格式统一用 pickle，以保持与官方脚本 read_pickle / to_pickle 的读写兼容。是否
+改用 Parquet 属于后续可选优化，不在本轮范围，也不改变本轮落盘格式。
+
+十三、Swap 的作用
+
+当前 WSL：
+
+RAM ≈ 10GB Swap = 6GB
+
+Swap 可以作为保险，但不能把它理解为额外的 6GB 高速 RAM。
+
+RAM 的速度远高于 SSD swap。
+
+如果程序持续大量使用 swap，可能表现为： - CPU 使用率并不高 -
+程序几乎不动 - 磁盘活动很高 - 系统响应变慢 - 训练速度突然下降
+
+因此目标应该是：
+
+尽量让正常工作集留在 RAM 中。
+
+Swap 主要用于处理短暂的内存峰值，而不是长期承载巨大 DataFrame。
+
+十四、LightGBM 也需要预留 RAM
+
+一个常见误区是：
+
+“我的 pandas DataFrame 能放进 10GB RAM，所以 LightGBM 就能训练。”
+
+这是错误的。
+
+LightGBM 还需要： - Dataset 数据结构 - histogram / bins - gradient /
+hessian - feature metadata - 训练临时工作空间
+
+所以在开始：
+
+model.fit(…)
+
+之前，系统必须仍然有明显的可用 RAM。
+
+不要让 pandas 在训练前已经占满全部 WSL 内存。
+
+十五、对当前机器的实际判断
+
+当前机器不是不能做 M5。
+
+相反：
+
+10GB WSL RAM + 6GB Swap + E 盘大量空闲空间 + pandas + LightGBM + Python
+3.10 + WSL/Linux + Qoder IDE
+
+已经足够完成一个正规的 M5 项目。
+
+限制主要在于：
+
+不能使用“把所有东西一次性放进 RAM”的粗暴实现。
+
+需要从项目一开始就按照低内存 pipeline 设计。
+
+十六、推荐原则
+
+后续 M5 开发应始终遵守：
+
+1.  不一次性对完整约 5900 万行创建几十个特征。
+2.  优先按 store 拆分。
+3.  数值特征尽量使用 float32。
+4.  整数根据范围使用更小 dtype。
+5.  字符串 ID 使用 category / integer encoding。
+6.  merge 前删除无用列。
+7.  groupby / rolling 后及时删除临时对象。
+8.  使用 del + gc.collect() 主动释放大型对象。
+9.  中间结果保存到 E 盘。
+10. 优先使用 Parquet 等格式，避免反复读取和处理巨大 CSV。（通用建议；本项目
+    为兼容官方 A1 脚本实际用 pickle，见第十二节“本项目实际口径”，本条不改变
+    本轮落盘格式。）
+11. LightGBM 开始训练前保留足够 RAM。
+12. 监控 RAM 和 swap，而不仅仅看程序是否报 OOM。
+13. 先建立单 store baseline，再逐渐扩大规模。
+14. 不要一开始追求复杂冠军方案。
+15. 每增加一类特征，都检查它带来的内存成本和验证集收益。
+
+十七、推荐开发顺序
+
+阶段 1：数据检查 - 确认所有 M5 CSV - shape - dtype - 缺失值 - 内存占用
+
+阶段 2：单 store baseline - 选择一个 store - long format - calendar -
+prices - 基础 lag - 基础 rolling - LightGBM - 28 天预测
+
+阶段 3：本地验证 - 建立符合 M5 时间结构的 validation - 计算 RMSE /
+WRMSSE（逐步完善）
+
+阶段 4：优化内存 - dtype downcast - category encoding - Parquet cache -
+删除临时 DataFrame - 内存监控
+
+阶段 5：扩展到所有 stores - store-by-store - 每个 store 单独训练 -
+保存模型 - 保存预测 - 释放 RAM - 下一 store
+
+阶段 6：提高模型效果 - 更多 lag - rolling statistics - price features -
+calendar/event/SNAP - 调参 - 特征筛选
+
+阶段 7：最终 submission - 汇总各 store 预测 - 构造 F1-F28 - 检查 id -
+检查 NaN - 检查行数 - 输出 submission.csv
+
+十八、最终结论
+
+M5 Forecasting - Accuracy 的内存问题是比赛本身的重要工程挑战。
+
+公开参赛者已经证明： - 16GB RAM 也可能无法直接处理完整约 5900 万行 +
+大量特征。 - 参赛者普遍采用 dtype 优化、按 store/state/product
+拆分、磁盘缓存、删除临时对象等方法。 - LightGBM 训练阶段本身也需要额外
+RAM。 - 因此内存优化不是“低配置机器才需要”，而是 M5 的正常工程实践。
+
+对于当前机器：
+
+10GB WSL RAM + 6GB swap 足以开始，并足以完成一个较正规的 M5 LightGBM
+项目。
+
+最推荐的方案不是继续增加 WSL 内存，也不是立刻租云服务器，而是：
+
+“从第一天开始按照低内存架构设计整个 pipeline。”
+
+核心路线：
+
+dtype 优化 ↓ 按 store 拆分 ↓ 单 store 特征工程 ↓ LightGBM ↓
+模型/特征落盘 ↓ 释放 RAM ↓ 下一个 store
+
+等这套 pipeline
+稳定后，如果未来确实需要全局模型、更多特征或者更复杂的高分方案，再根据实际瓶颈决定是否使用更大内存的云机器。
+
+参考资料（上一轮检索使用）
+
+Kaggle Discussion: M5 Forecasting Accuracy - Memory / solution
+discussions
+https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/144067
+
+https://www.kaggle.com/competitions/m5-forecasting-accuracy/discussion/153281
+
+https://www.kaggle.com/competitions/m5-forecasting-accuracy/discussion/140290
+
+https://www.kaggle.com/competitions/m5-forecasting-accuracy/discussion/141150
+
+https://www.kaggle.com/c/m5-forecasting-accuracy/discussion/138881
+
+GitHub: Christophe Nicault M5 Forecasting Accuracy
+https://github.com/cnicault/m5-forecasting-accuracy
+
+Max Wienandts M5 Forecasting
+https://github.com/MaxWienandts/M5-Forecasting

@@ -1,0 +1,36 @@
+# ============================================================
+# M5 复现项目 .gitignore
+# 原则：代码与文档入库；数据集、模型、日志、产物因体积过大不入库
+# （GitHub 单文件限制 100MB，data/ 与 models/ 中的文件均远超限制）
+# ============================================================
+
+# --- 数据集（原始 csv 与中间 pkl，共 18G）---
+data/*.csv
+data/*.pkl
+data/processed/*
+!data/processed/.gitkeep
+
+# --- 模型文件（.bin 均超过 100MB；仅保留目录骨架）---
+models/*
+!models/.gitkeep
+
+# --- 第三方克隆资料（自带 .git 的独立仓库，1.9G）---
+src/M5-methods/
+
+# --- 日志（仅保留目录骨架）---
+logs/*
+!logs/.gitkeep
+
+# --- 预测输出（仅保留目录骨架）---
+output/before_ensemble/*
+!output/before_ensemble/.gitkeep
+
+# --- Python 缓存 ---
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# --- 系统与编辑器 ---
+.DS_Store
+.vscode/
+.idea/
