@@ -6,7 +6,7 @@ import time
 import lightgbm as lgb
 import numpy as np
 import pandas as pd
-from common import F, FILES, stage_root, manifest, complete, checkpoint, atomic_csv, atomic_json, event
+from common import F, FILES, stage_root, artifact_id, complete, checkpoint, atomic_csv, atomic_json, event
 
 MEAN={'recursive':['enc_cat_id_mean','enc_cat_id_std','enc_dept_id_mean','enc_dept_id_std','enc_item_id_mean','enc_item_id_std'],
       'nonrecursive':['enc_store_id_dept_id_mean','enc_store_id_dept_id_std','enc_item_id_state_id_mean','enc_item_id_state_id_std']}
@@ -15,7 +15,7 @@ ROLL=[(s,w) for s in [1,7,14] for w in [7,14,30,60]]
 
 def load_frame(c,stage,store,mode):
     dest=stage_root(c,stage)/'cache'/store
-    assert complete(dest/'complete.json',manifest(c),FILES)
+    assert complete(dest/'complete.json',artifact_id(c,stage,store,'cache'),FILES)
     base=pd.read_pickle(dest/FILES[0]); reference=base.index
     for name in FILES[1:]:
         table=pd.read_pickle(dest/name)
@@ -61,7 +61,7 @@ def predict_recursive(model,frame,features,cut,threads):
 
 def run_model(c,stage,store,mode):
     dest=stage_root(c,stage)/mode/store; dest.mkdir(parents=True,exist_ok=True)
-    fp=manifest(c); products=['model.txt','predictions.csv','importance.csv','metadata.json']
+    fp=artifact_id(c,stage,store,mode); products=['model.txt','predictions.csv','importance.csv','metadata.json']
     if complete(dest/'complete.json',fp,products):
         event('model_verified',stage=stage,store=store,mode=mode); return
     started=time.monotonic(); cut=c['stages'][stage]
@@ -76,12 +76,25 @@ def run_model(c,stage,store,mode):
     params={**c['params'],**c['mode_params'][mode],'num_threads':c['threads']}
     train_rows=int(train_mask.sum())
     future=frame.loc[frame.d>cut-100].copy()
-    train=frame.loc[train_mask,features]
-    labels=frame.loc[train_mask,'sales'].to_numpy(dtype=np.float32)
-    del frame; gc.collect()
-    dataset=lgb.Dataset(train,label=labels,params=params,free_raw_data=True)
-    dataset.construct()
-    del train,labels; gc.collect()
+    cache=dest/'cache'; cache.mkdir(exist_ok=True)
+    cache_fp=artifact_id(c,stage,store,mode+'_training_cache')
+    schema=dict(features=features,params=params,train_first_day=1,train_last_day=cut,train_rows=train_rows)
+    if complete(cache/'complete.json',cache_fp,['train.bin','schema.json']):
+        assert json.loads((cache/'schema.json').read_text())==schema
+        dataset=lgb.Dataset(str(cache/'train.bin'),params=params,free_raw_data=True)
+        del frame; gc.collect()
+        dataset.construct()
+    else:
+        train=frame.loc[train_mask,features]
+        labels=frame.loc[train_mask,'sales'].to_numpy(dtype=np.float32)
+        del frame; gc.collect()
+        dataset=lgb.Dataset(train,label=labels,params=params,free_raw_data=True)
+        dataset.construct()
+        del train,labels; gc.collect()
+        temporary=cache/f'train.bin.tmp-{os.getpid()}'
+        dataset.save_binary(str(temporary)); os.replace(temporary,cache/'train.bin')
+        atomic_json(schema,cache/'schema.json')
+        checkpoint(cache/'complete.json',cache_fp,['train.bin','schema.json'])
     train_start=time.monotonic()
     event('training_started',stage=stage,store=store,mode=mode,rows=train_rows,features=len(features),rounds=c['rounds'])
     def progress(env):

@@ -5,7 +5,7 @@ import json
 import time
 import numpy as np
 import pandas as pd
-from common import ROOT, META, FILES, stage_root, manifest, complete, checkpoint, event, atomic_json
+from common import ROOT, META, FILES, stage_root, artifact_id, complete, checkpoint, event, atomic_json
 
 def legacy(cutoff):
     spec=importlib.util.spec_from_file_location('base_features',ROOT/'src/1_preprocessing_by_store.py')
@@ -56,7 +56,7 @@ def encoding_stats(p,sales,cal,release,cut):
 
 def prepare(c,stage,store):
     dest=stage_root(c,stage)/'cache'/store; dest.mkdir(parents=True,exist_ok=True)
-    fp=manifest(c)
+    fp=artifact_id(c,stage,store,'cache')
     if complete(dest/'complete.json',fp,FILES):
         event('cache_verified',stage=stage,store=store); return
     started=time.monotonic(); cut=c['stages'][stage]

@@ -1,7 +1,7 @@
 import json
 import numpy as np
 import pandas as pd
-from common import ROOT, META, F, stage_root, run_root, atomic_csv, atomic_json, event, manifest, checkpoint, complete
+from common import ROOT, META, F, stage_root, run_root, atomic_csv, atomic_json, event, artifact_id, checkpoint, complete
 from metrics import WRMSSE, errors, aligned
 
 def revenue_at(sales,cut):
@@ -50,7 +50,9 @@ def evaluate(c,stage):
         parts=[]
         for store in c['stores']:
             modeldir=dest/mode/store
-            assert complete(modeldir/'complete.json',manifest(c),['model.txt','predictions.csv','importance.csv','metadata.json'])
+            assert complete(modeldir/'complete.json',artifact_id(c,stage,store,mode),['model.txt','predictions.csv','importance.csv','metadata.json'])
+            metadata=json.loads((modeldir/'metadata.json').read_text())
+            assert metadata['train_last_day']==cut and metadata['predict_days']==[cut+1,cut+28]
             parts.append(pd.read_csv(modeldir/'predictions.csv'))
         predictions[mode]=aligned(pd.concat(parts,ignore_index=True),ids)
     predictions['ensemble']=sum(c['ensemble'][name]*predictions[name] for name in c['modes'])
@@ -92,7 +94,7 @@ def evaluate(c,stage):
         imp=importance[importance['mode']==mode].groupby('feature').gain.sum().nlargest(20).sort_values()
         ax=imp.plot.barh(figsize=(10,7)); ax.figure.tight_layout(); ax.figure.savefig(out/f'{mode}_importance.png',dpi=140); plt.close(ax.figure)
     products=[p.name for p in out.iterdir() if p.is_file() and p.name!='complete.json']
-    checkpoint(out/'complete.json',manifest(c),products,**integrity)
+    checkpoint(out/'complete.json',artifact_id(c,stage,kind='results'),products,**integrity)
     event('evaluation_complete',stage=stage,**integrity)
 
 def kaggle(c):

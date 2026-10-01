@@ -1,0 +1,21 @@
+{
+  "pass": true,
+  "series": 30490,
+  "stores": {
+    "CA_1": 3049,
+    "CA_2": 3049,
+    "CA_3": 3049,
+    "CA_4": 3049,
+    "TX_1": 3049,
+    "TX_2": 3049,
+    "TX_3": 3049,
+    "WI_1": 3049,
+    "WI_2": 3049,
+    "WI_3": 3049
+  },
+  "validation_evaluation_shared_history_exact_match": true,
+  "sample_submission_ids_exact_match": true,
+  "calendar_days": 1969,
+  "calendar_contiguous": true,
+  "sales_nonnegative": true
+}

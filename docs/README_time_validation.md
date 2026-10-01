@@ -14,14 +14,14 @@ cd ~/projects/m5-forecasting
 .venv/bin/python src/time_validation/run.py all
 # 已有后台任务时只看状态，不再启动第二个任务
 .venv/bin/python src/time_validation/status.py
-tail -f experiments/time_validation_v1/runner.log
+tail -f experiments/time_validation_v2/runner.log
 ```
 
-正式运行按门店串行，每家先非递归再递归；每个进程结束即释放内存。
+正式运行按门店串行，每家先非递归再递归；按模式隔离 LightGBM 二进制训练缓存，基础五表仅在同一截止日内共用；每个进程结束即释放内存。
 Windows 隐藏的 WSL 客户端运行 `src/time_validation/launch.py`，Linux 训练子进程使用独立 session，
 不依赖 IDE 终端存活。日志在实验根目录和各阶段 `logs/` 中。关机、休眠或 WSL shutdown 会中断计算；
 恢复后执行相同 `run.py all`，先核对配置、代码内容、全部原始输入 SHA-256、依赖和已完成产物 SHA-256。
-互斥锁阻止同时启动两份。未完成的门店/模型会重新运行；不会仅因文件存在而跳过。
+每个检查点另绑定阶段、截止日、门店和模式，防止跨目录误复用。互斥锁阻止同时启动两份。未完成的门店/模型会重新运行；不会仅因文件存在而跳过。
 修改配置/代码/输入/依赖后必须换 `config.json` 的实验名，不允许混用产物。
 若发生错误，`status.json` 保存异常和 traceback，运行停止，不带错进入后续阶段。
 
@@ -56,7 +56,7 @@ Windows 隐藏的 WSL 客户端运行 `src/time_validation/launch.py`，Linux �
 
 ## 评价与结果
 
-`experiments/time_validation_v1/{development_d1885,test_d1913,final_d1941}/`：
+`experiments/time_validation_v2/{development_d1885,test_d1913,final_d1941}/`：
 
 - `cache/{store}/`：独立五表、全局类别映射、行数、范围与耗时。
 - `{nonrecursive,recursive}/{store}/`：模型、预测、gain/split 重要性、参数/特征列表/耗时/RSS、校验检查点。

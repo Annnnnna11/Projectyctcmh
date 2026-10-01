@@ -39,7 +39,7 @@ def event(name, **kwargs):
 def config(smoke=False):
     c = json.loads((HERE/'config.json').read_text())
     if smoke:
-        c.update(experiment='smoke_v2', rounds=5, stores=['CA_1'], smoke_items=48)
+        c.update(experiment='smoke_v3', rounds=5, stores=['CA_1'], smoke_items=48)
     return c
 
 def run_root(c):
@@ -70,6 +70,9 @@ def ensure_run(c):
 
 def manifest(c):
     return json.loads((run_root(c)/'manifest.json').read_text())['fingerprint']
+
+def artifact_id(c,stage,store=None,kind=None):
+    return digest(dict(run=manifest(c),stage=stage,cutoff=c['stages'][stage],store=store,kind=kind))
 
 def complete(path, fingerprint, files):
     path = Path(path)

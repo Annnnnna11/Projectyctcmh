@@ -1,5 +1,5 @@
 {
-  "experiment": "time_validation_v1",
+  "experiment": "time_validation_v2",
   "stages": {"development": 1885, "test": 1913, "final": 1941},
   "horizon": 28,
   "first_day": 1,

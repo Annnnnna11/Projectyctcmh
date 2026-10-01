@@ -33,6 +33,19 @@ def metadata(n=8):
                          'dept_id':[f'd{i%3}' for i in range(n)],'item_id':[f'p{i//2}' for i in range(n)]})
 
 class Checks(unittest.TestCase):
+    def test_resume_rejects_wrong_scope_or_corruption(self):
+        from tempfile import TemporaryDirectory
+        from pathlib import Path
+        from common import checkpoint,complete,digest
+        with TemporaryDirectory() as directory:
+            path=Path(directory); (path/'data').write_text('valid')
+            first=digest({'cutoff':1885,'store':'CA_1','mode':'recursive'})
+            wrong=digest({'cutoff':1913,'store':'CA_1','mode':'recursive'})
+            checkpoint(path/'complete.json',first,['data'])
+            self.assertTrue(complete(path/'complete.json',first,['data']))
+            with self.assertRaises(RuntimeError): complete(path/'complete.json',wrong,['data'])
+            (path/'data').write_text('corrupt')
+            self.assertFalse(complete(path/'complete.json',first,['data']))
     def test_hand_calculation(self):
         y=np.array([[0.,0,1,2,3]])
         self.assertEqual(scaling(y)[0],1)
