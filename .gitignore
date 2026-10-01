@@ -34,3 +34,10 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+
+# Time-validation experiments and preserved local artifacts
+.venv/
+*:Zone.Identifier
+output/*
+!output/before_ensemble/
+experiments/
