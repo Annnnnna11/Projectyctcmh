@@ -2,7 +2,10 @@
 
 本分支 `experiment/time-validation` 直接继承原仓库提交 `c904e55`，包含完整原代码历史。
 无需额外复制仓库；原版代码可通过该提交或基线提交 `c75d089` 查看。
-2026-10-01 按用户要求将本分支推送至 `origin`，不修改远程 main。
+2026-10-01 按用户确认，将本分支发布到个人 Fork `Annnnnna11/Projectyctcmh`。
+GitHub 返回原仓库的实际名称为 `meihan527/Projectyctcmh`，旧地址 `meihan527/m5-forecasting` 指向该仓库。
+`origin` 指向个人 Fork，`upstream` 保留原仓库地址；只推送 `experiment/time-validation`，不修改 main。
+此次发布仅包含 Git 跟踪的代码、文档、检查脚本和历史提交，不包含数据、模型、缓存或虚拟环境。
 
 ## 提交与主要文件
 
