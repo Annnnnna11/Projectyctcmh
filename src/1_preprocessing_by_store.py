@@ -58,7 +58,7 @@ def configure_logging() -> logging.Logger:
     return logger
 
 
-LOGGER = configure_logging()
+LOGGER = logging.getLogger("m5_preprocessing")
 
 
 def log_event(event: str, **values: object) -> None:
@@ -428,6 +428,8 @@ def mark_complete(store: str, category_hash: str) -> None:
 
 
 def main() -> None:
+    global LOGGER
+    LOGGER = logging.getLogger("m5_preprocessing")
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     selected = parse_stores()
     if not selected:
