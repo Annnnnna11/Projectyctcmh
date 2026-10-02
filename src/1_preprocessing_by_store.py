@@ -44,6 +44,12 @@ SCHEMA_VERSION = 1
 
 
 def configure_logging() -> logging.Logger:
+    '''
+    Configure the logger.
+    Returns:
+        logging.Logger: The configured logger.
+    The output is json format.
+    '''
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     logger = logging.getLogger("m5_preprocessing")
     logger.setLevel(logging.INFO)
@@ -62,19 +68,33 @@ LOGGER = configure_logging()
 
 
 def log_event(event: str, **values: object) -> None:
+    '''
+    Log an event using json.
+    '''
     payload = {"event": event, "time": time.strftime("%Y-%m-%dT%H:%M:%S"), **values}
     LOGGER.info(json.dumps(payload, ensure_ascii=False, default=str, sort_keys=True))
 
 
 def peak_rss_mb() -> float:
+    '''
+    Return the peak memory usage of the current process in MB.
+    '''
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0
 
 
 def dataframe_mb(df: pd.DataFrame) -> float:
+    '''
+    Return the memory usage of a dataframe in MB.
+    '''
     return float(df.memory_usage(index=True, deep=True).sum() / 1024**2)
 
 
 def parse_stores() -> list[str]:
+    '''
+    Parse the stores to be processed.
+    Returns:
+        list[str]: The stores to be processed.
+    '''
     value = os.environ.get("M5_STORES", "").strip()
     requested = ALL_STORES if not value else [part.strip() for part in value.split(",") if part.strip()]
     unknown = sorted(set(requested) - set(ALL_STORES))
@@ -85,6 +105,9 @@ def parse_stores() -> list[str]:
 
 
 def atomic_pickle(obj: object, path: Path) -> None:
+    '''
+    Save a pickle file atomically.
+    '''
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.tmp-{os.getpid()}")
     try:
@@ -96,6 +119,9 @@ def atomic_pickle(obj: object, path: Path) -> None:
 
 
 def atomic_json(payload: dict[str, object], path: Path) -> None:
+    '''
+    Save a json file atomically.
+    '''
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.tmp-{os.getpid()}")
     try:
@@ -110,20 +136,38 @@ def atomic_json(payload: dict[str, object], path: Path) -> None:
 
 
 def index_signature(index: pd.Index) -> str:
+    '''
+    Return a hex digest of the hash of the sorted index.
+    Verify that the row order of the five tables is identical 
+    and that the category mapping remains consistent across multiple runs.
+    '''
     hashed = pd.util.hash_pandas_object(index, index=False).to_numpy(dtype=np.uint64, copy=False)
     return hashlib.sha256(hashed.tobytes()).hexdigest()
 
 
 def category_signature(vocabs: dict[str, list[object]]) -> str:
+    '''
+    Return a hex digest of the hash of the sorted index.
+    Verify that the row order of the five tables is identical 
+    and that the category mapping remains consistent across multiple runs.
+    '''
     serialized = json.dumps(vocabs, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
     return hashlib.sha256(serialized).hexdigest()
 
 
 def metadata_path(store: str) -> Path:
+    '''
+    Return the path to the metadata file for a store.
+    '''
     return PROCESSED_DIR / store / "metadata.json"
 
 
 def read_metadata(store: str) -> dict[str, object] | None:
+    '''
+    Read the metadata for a store.
+    Returns:
+        dict[str, object] | None: The metadata or None if the file does not exist or is invalid.
+    '''
     path = metadata_path(store)
     if not path.exists():
         return None
@@ -135,6 +179,19 @@ def read_metadata(store: str) -> dict[str, object] | None:
 
 
 def validate_store_files(store: str, expected_stage: str, category_hash: str | None = None) -> bool:
+    '''
+    Validate the store files.
+    Returns:
+        bool: True if the files are valid, False otherwise.
+    '''
+     # 1. 读 metadata.json，检查 schema_version / store / stage
+    # 2. 检查所有产物文件是否存在
+    # 3. 加载所有 pkl，检查：
+    #    - index 唯一
+    #    - 五表 index 完全相同（行对齐！）
+    #    - row_count 与 metadata 记录一致
+    #    - index_signature 哈希一致
+    # 4. 如果 stage="complete"，还检查 d>1941 的 sales 全为 NaN
     metadata = read_metadata(store)
     required = FILES if expected_stage == "complete" else BASE_FILES
     if not metadata or metadata.get("schema_version") != SCHEMA_VERSION:
@@ -188,6 +245,13 @@ def as_global_category(series: pd.Series, categories: list[object]) -> pd.Series
 
 
 def load_global_inputs() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, dict[str, list[object]], dict[str, int], int, pd.DataFrame]:
+      # 1. 读 calendar.csv → 添加 d_num 列（int16）
+    # 2. 只读 sales 的 6 列元数据 → 构建全局类别词表 vocabs
+    # 3. 以 Categorical + float32 dtype 读完整 sales（省内存的关键！）
+    # 4. 记录 id → 序号映射 id_ordinals（用于算全局行号）
+    # 5. 读 sell_prices → 计算每个 (store, item) 的 release 周
+    # 6. calendar 的事件/SNAP列转全局 Categorical
+    
     sales_path = RAW_DIR / "sales_train_evaluation.csv"
     calendar = pd.read_csv(RAW_DIR / "calendar.csv")
     calendar["d_num"] = calendar["d"].str.removeprefix("d_").astype(np.int16)
