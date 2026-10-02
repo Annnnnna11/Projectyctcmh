@@ -1,0 +1,20 @@
+{
+  "evaluation": {
+    "content": "final full-history equal blend",
+    "days": [
+      1942,
+      1969
+    ],
+    "train_end": 1941
+  },
+  "rows": 60980,
+  "submitted": false,
+  "validation": {
+    "content": "genuine out-of-sample test-window equal blend",
+    "days": [
+      1914,
+      1941
+    ],
+    "train_end": 1913
+  }
+}
