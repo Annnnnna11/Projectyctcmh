@@ -1,0 +1,13 @@
+{
+  "days": [
+    1886,
+    1913
+  ],
+  "finite": true,
+  "full_coverage": true,
+  "horizon": 28,
+  "nonnegative": true,
+  "rows": 30490,
+  "stores": 10,
+  "unique_ids": true
+}

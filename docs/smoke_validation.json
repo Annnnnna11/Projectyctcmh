@@ -1,0 +1,15 @@
+{
+  "smoke": "smoke_v3",
+  "stages": [
+    "development",
+    "test",
+    "final"
+  ],
+  "series": 48,
+  "rounds": 5,
+  "all_stages_complete": true,
+  "binary_training_cache_resume_predictions_match": true,
+  "future_warning_count": 0,
+  "unit_tests_passed": 8,
+  "formal_scores_available": false
+}

@@ -1,0 +1,9 @@
+{
+  "implementation_score": 0.8140336757062586,
+  "maximum_level_difference": 1.1102230246251565e-16,
+  "method": "external aggregate_levels AST + reference scalar scale formula, 12 levels",
+  "pass": true,
+  "reference_score": 0.8140336757062586,
+  "reference_url": "https://raw.githubusercontent.com/Nixtla/datasetsforecast/main/datasetsforecast/m5.py",
+  "source_sha256": "9ecf3aa23a2d6f744d4a559197c0bf60ddb3eb28749c4288383057a6f5194106"
+}

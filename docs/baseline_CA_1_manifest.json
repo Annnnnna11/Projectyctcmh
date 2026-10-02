@@ -1,0 +1,109 @@
+{
+  "source_commit": "c904e5514686a56952f1a9ef5578a58000390354",
+  "artifacts": {
+    "data/calendar.csv": {
+      "bytes": 103469,
+      "sha256": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5"
+    },
+    "data/processed/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "data/processed/CA_1/grid_part_1.pkl": {
+      "bytes": 117985722,
+      "sha256": "9f7d9204546e967ec106dc960e747ca20f12fa002945736215379ef90e4dc155"
+    },
+    "data/processed/CA_1/grid_part_2.pkl": {
+      "bytes": 273893166,
+      "sha256": "0d8b6890b3aae0f6adc07c87cb862c4d0e443575154a0843651aaec95c9b302f"
+    },
+    "data/processed/CA_1/grid_part_3.pkl": {
+      "bytes": 132559757,
+      "sha256": "f067e7ca764ddaaa76eb8ae7a6164c5fbbe36f74ad9304610520b44e1948cc6c"
+    },
+    "data/processed/CA_1/lags_df_28.pkl": {
+      "bytes": 800249342,
+      "sha256": "73cbc7aa85ed4b3446cb9ddfdb724ad12fa1dda020be21f8d7f59ba7b0e7489e"
+    },
+    "data/processed/CA_1/mean_encoding_df.pkl": {
+      "bytes": 488335126,
+      "sha256": "70ac1ffe6bf0173573a3fbb63496a371f1e9a389df02d6a110b50a50b1f37f16"
+    },
+    "data/processed/CA_1/metadata.json": {
+      "bytes": 2985,
+      "sha256": "b7a103936d9effb4e103a31acf8624d456344126f8736ac03f96da151ec94e17"
+    },
+    "data/processed/test_CA_1.pkl": {
+      "bytes": 81026860,
+      "sha256": "611404f35a3a3949244ddf31f76a24e6f99241051bd9fe7aaf8c612e12042440"
+    },
+    "data/sales_train_evaluation.csv": {
+      "bytes": 121736518,
+      "sha256": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0"
+    },
+    "data/sales_train_validation.csv": {
+      "bytes": 120007726,
+      "sha256": "f368e66ed1dbecb48b2cc8fc589bf68b3deddbbb36bf5c88b4d6d0a09b9b6724"
+    },
+    "data/sample_submission.csv": {
+      "bytes": 5228786,
+      "sha256": "eb7597afbec367475ef25dc6dbbc009b8faa47fa2107252c72a029e3cdf72343"
+    },
+    "data/sell_prices.csv": {
+      "bytes": 203395785,
+      "sha256": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+    },
+    "logs/baseline_CA_1/commit.txt": {
+      "bytes": 41,
+      "sha256": "c00c2c668ffe965df2aee8d2e0df9bac173c8a0e883e7e5e1251b28fe8af5066"
+    },
+    "logs/baseline_CA_1/local_changes.patch": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "logs/baseline_CA_1/predict_nonrecursive.log": {
+      "bytes": 14240,
+      "sha256": "6721d027a8b43f0bde8df6d213f172e88ea4a0dcb11ba27bcae04e03da040643"
+    },
+    "logs/baseline_CA_1/predict_recursive.log": {
+      "bytes": 18444,
+      "sha256": "ebc8ad83f2a9ba14881d673020e74b559d540eb26caea5cb297d1710c233440e"
+    },
+    "logs/baseline_CA_1/preprocessing.log": {
+      "bytes": 748,
+      "sha256": "2ac616d3c361ba735edcfb426f5e88388627072e2627e43ab7c59dc580baab6c"
+    },
+    "logs/baseline_CA_1/requirements.txt": {
+      "bytes": 217,
+      "sha256": "ffa08ee07987d75e4adcecf69163a1ee39bba6d2897f1be6e8a3700c93c1a42b"
+    },
+    "logs/baseline_CA_1/train_nonrecursive.log": {
+      "bytes": 1935,
+      "sha256": "d585b99c65f25b9b90b0f324c5ad5dd92714ae556186439f54976ef0528aa04b"
+    },
+    "logs/baseline_CA_1/train_recursive.log": {
+      "bytes": 1361,
+      "sha256": "c40f7461a88bb9e80a63565bdada0257e7d17bd07382f86bae7aaf4e8db6df07"
+    },
+    "models/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "models/lgb_model_CA_1_v1.bin": {
+      "bytes": 188244165,
+      "sha256": "a35a88f2085651712102544d76188656a57296956ff37cfc1bd0d2f64db528fa"
+    },
+    "models/non_recur_model_CA_1.bin": {
+      "bytes": 131363928,
+      "sha256": "6e7d9fd560d444a20b4f98242d2c9f1a44420af45a20bd2de403e21fb136bc33"
+    },
+    "output/baseline_CA_1/submission_kaggle_nonrecursive_store.csv": {
+      "bytes": 1710172,
+      "sha256": "55d89661bb82cfbf14acfbc9333277d3d99e26eebbcbfc8887cc7390451e8e72"
+    },
+    "output/baseline_CA_1/submission_kaggle_recursive_store.csv": {
+      "bytes": 1707438,
+      "sha256": "c4b0b28158f8a7ba53fada0a331195de311876f080e8f8ff3e5eca1e3230caf8"
+    }
+  }
+}
