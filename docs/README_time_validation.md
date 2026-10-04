@@ -1,5 +1,7 @@
 # 全门店时间验证流程
 
+> **v3（`time_validation_v3`，2026-10-04）已生效**：development 与 test 各自独立选择轮数与融合权重，final 继承 test 的选择结果；不生成 Kaggle 提交文件。详见 `docs/CHANGELOG_time_validation.md` 同日条目。
+
 新入口：`src/time_validation/run.py`。在 WSL `~/projects/m5-forecasting` 中使用 `.venv/bin/python`。
 基线代码在 `c75d089`（其父提交为 `c904e55`）；原模型、特征缓存、CA_1 预测及日志未搬移或覆盖。
 基线 26 个文件的 SHA-256 在 `docs/baseline_CA_1_manifest.json`，每个阶段后自动核对。
@@ -14,7 +16,7 @@ cd ~/projects/m5-forecasting
 .venv/bin/python src/time_validation/run.py all
 # 已有后台任务时只看状态，不再启动第二个任务
 .venv/bin/python src/time_validation/status.py
-tail -f experiments/time_validation_v2/runner.log
+tail -f experiments/time_validation_v3/runner.log
 ```
 
 正式运行按门店串行，每家先非递归再递归；按模式隔离 LightGBM 二进制训练缓存，基础五表仅在同一截止日内共用；每个进程结束即释放内存。
@@ -35,9 +37,12 @@ Windows 隐藏的 WSL 客户端运行 `src/time_validation/launch.py`，Linux �
 
 两模型均不再使用 FIRST_DAY=710。保留原方案依据价格首次上市周过滤上市前训练行的处理；
 因此“d1 开始”指所有已知历史进入流程，单个商品只保留上市后的训练行。
-两模型保留 Tweedie、学习率、树参数、seed、3000 轮；4 线程，增加 force_col_wise 控制内存，未使用早停。
-开发期结束后按预先指定规则保留原参数和 50:50 融合，写入 `frozen_after_development.json`；
-最后测试不用于改变参数或融合权重。两单模型与等权融合均报告。
+两模型保留 Tweedie、学习率、树参数、seed；4 线程，增加 force_col_wise 控制内存，未使用早停。
+v3 废除固定 3000 轮与冻结 50:50 融合（不再写 frozen_after_development.json）：
+development 与 test 各自在自己的 select_cutoff（1857/1885）上，用前缀等价路径从候选
+轮数 [500..3000] 中按选择窗 WRMSSE 独立选出每模式轮数与融合权重（美元权重取选择
+截止前 28 天、RMSSE 尺度只用 d<=select_cutoff）；final 不选参，直接沿用 test 的选择结果。
+两单模型与选中权重融合均报告。
 
 跨店目标编码用所有 10 店截至当前 cutoff 的销量充分统计量重算，保留原有组别和样本标准差 ddof=1；
 既不使用该窗口真实未来标签，也不复用原版编码。训练行使用训练期整体编码，包含其自身标签；
@@ -56,11 +61,12 @@ Windows 隐藏的 WSL 客户端运行 `src/time_validation/launch.py`，Linux �
 
 ## 评价与结果
 
-`experiments/time_validation_v2/{development_d1885,test_d1913,final_d1941}/`：
+`experiments/time_validation_v3/`：
 
-- `cache/{store}/`：独立五表、全局类别映射、行数、范围与耗时。
-- `{nonrecursive,recursive}/{store}/`：模型、预测、gain/split 重要性、参数/特征列表/耗时/RSS、校验检查点。
-- `results/`：各模型和两个简单基线预测、scores.csv、12 层明细、error_analysis.csv、timings.csv 和 PNG 图。
+- `features/cutoff_{1857,1885,1913,1941}/{store}/`：按截止日归置的独立五表、全局类别映射、行数、范围与耗时；cutoff_1885 同时服务 development 重训与 test 选择，select_cutoff 缓存在全部阶段成功后一次性清理（train_cutoff 缓存保留）。
+- `selection/cutoff_{1857,1885}/{nonrecursive,recursive}/{store}/`：各候选轮数的完整 28 天预测、耗时与元数据（选择阶段模型文件落盘即删）；`rounds.json`/`weights.json` 落盘选中轮数与融合权重。
+- `{development,test,final}/{nonrecursive,recursive}/{store}/`：交付模型、预测、gain/split 重要性、参数/特征列表/耗时/RSS、校验检查点。
+- `{development,test,final}/results/`：各模型和两个简单基线预测、scores.csv、12 层明细、error_analysis.csv、timings.csv 和 PNG 图。
 - 实验根目录 `manifest.json`：配置、代码哈希、Git 提交、原始数据哈希、依赖；`REPORT.md` 汇总已完成阶段。
 
 完整评价为 30,490 条底层序列，12 层聚合共 42,840 条；所有预测先按 id、商品/店和明确的日序列对齐。
@@ -81,9 +87,9 @@ MAE、RMSE、平均/总偏差和相对偏差属于底层诊断指标，不是层
 
 ## 最终文件与局限
 
-`final_d1941/results/ensemble.csv` 是最终 30,490×28 预测；回测保存在各自阶段，绝不混用。
-完成所有阶段后才生成 `final_d1941/results/kaggle_ensemble.csv`，严格按 sample_submission 排序：
-`_validation` 段为训练截至 d1913 后对 d1914–1941 的真实样本外融合预测；
-`_evaluation` 段为训练截至 d1941 后对 d1942–1969 的最终融合预测。没有占位零。
-不向 Kaggle 提交，不推送 GitHub。最终窗口没有提供标签，无法本地评价其准确度。
+`final/results/ensemble.csv` 是最终 30,490×28 预测（d1942–1969）；回测保存在各自阶段，绝不混用。
+v3 已拍板不生成 Kaggle 提交文件（不再有 kaggle_ensemble.csv）：final 仅做完整性检查——
+行数、28 天、无 NaN、无负数、无重复 ID，并记录继承自 test 的轮数与融合权重。
+不向 Kaggle 提交。仓库只入库代码与文档：数据集、模型、日志与 `experiments/` 产物按 `.gitignore` 排除，不随推送上传。
+最终窗口没有提供标签，无法本地评价其准确度。
 本轮只有每窗口 20 个按店模型，不等于冠军全部 220 模型复现；仅两个样本外窗口，无法覆盖全年稳定性。

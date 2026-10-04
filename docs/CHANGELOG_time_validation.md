@@ -65,3 +65,31 @@ tail -f experiments/time_validation_v2/runner.log
 ```
 
 文档提交不会修改当前模型代码/配置/依赖指纹，也不会重启训练。
+
+## 2026-10-04 v3 代码改造（10.2 改进 Scheme 实施）
+
+按定稿 `docs/10.2改进scheme.md` 实施 `time_validation_v3`（方案 A）：development（选 1857 / 重训 1885）与 test（选 1885 / 重训 1913）各自独立选轮数与融合权重，final（重训 1941）无选参步骤、直接沿用 test 阶段落盘的选择结果，1914–1941 只被 test 闭卷评分一次；final 仅完整性检查，不生成 Kaggle 提交文件。
+
+- **前缀等价路径**：每个「选择阶段×店×模式」只训一次到候选上限（正式 3000、smoke 30），各候选 k 用 `model.predict(..., num_iteration=k)` 做完整 28 天预测（递归同样逐日回填）；新增 `prefix_fallback` 开关保留兜底分支（训至上限以 num_iteration=k 交付）；`equivalence_check` 动作在 smoke 阶段强制验证前缀等价前提并即时决策。
+- **等价性验证边界**：冒烟探针为 30 轮上限（threads=4 与正式一致），两模式实测偏差 0.0；3000 轮全量规模的浮点累积未直接验证，属已接受偏差。正式全量前可在 WSL 环境先跑一次全尺寸预检：`run.py equivalence_check --cutoff 1857 --store CA_1`（代价约单店 2×3500 轮训练）。
+- **选择阶段评分口径**：WRMSSE 美元权重取 select_cutoff 前 28 天（1857→d1830–1857）、RMSSE 尺度只用 d<=select_cutoff；`metrics.py` 新增 `selection_wrmsse`/`blend` 接口并断言历史宽度受 cutoff 约束。
+- **config.json**：experiment 改 `time_validation_v3`，新增 `round_candidates`/`round_selection`/`ensemble_grid`/`early_stopping`(enabled=false)/`prefix_fallback`，删除旧 `selection` 字符串与固定 `ensemble` 0.5/0.5；smoke 用候选 [10,20,30]、CA_1 前 48 商品。
+- **特征缓存**：按 cutoff 归置 `features/cutoff_{1857,1885,1913,1941}/<店>/`五表，cutoff_1885 同时服务 development 重训与 test 选择；select_cutoff 缓存在全部消费方结束后由 run.py 显式清理（train_cutoff 缓存与选择结果 json 保留）。
+- **选择产物生命周期**：各候选预测/耗时/分数落盘后即删选择阶段模型文件（`keep_selection_models` 审计例外）；选择结果（rounds.json/weights.json 含预测文件哈希）落盘且 final 可读。
+- **run.py 新 action**：prepare（按 --cutoff）/ train_candidates / select_rounds / select_weight / model（=retrain，按阶段已选轮数）/ evaluate / equivalence_check / cleanup；all/stage/check 语义保留；每阶段结束更新中文 REPORT.md 并在本文件追加运行时条目（smoke 不写 docs）。
+- **launch.py / status.py / 兼容薄壳**：launch.py 改用带回退的解释器解析；status.py 增加六项链路旗标（选择类仅 dev/test，final 显示「继承自 test 的轮数与权重」）并支持 --smoke；`src/2_train`、`src/3_predict` 下 4 个兼容薄壳随新接口同步更新语义。
+- **环境适配**：子进程 Python 改为 ROOT/.venv/bin/python 存在则用、否则回退 sys.executable（无 .venv 代码副本工作区；WSL 运行环境行为不变）；verify_preserved() 新增 `M5_BASELINE_MISSING=allow` 降级警告（默认仍严格抛错）；matplotlib 缺失时绘图降级跳过、csv 产物完整。
+- **tests.py**：新增 11 项测试——mask 无交集、目标编码不含 cutoff 后销量、未来销量全遮蔽与每 id 恰 28 个未来日（build_base_grid 级）、递归仅预测回填（保留）、跨 cutoff 指纹隔离（保留）、候选完整 28 天评分、权重范围与 w=0/w=1 端点、test 选择窗止于 1913/权重窗止于 cutoff（选择窗口径边界）、final 无选参路径（stage_spec/selection_source_stage）、前缀等价容差断言（合成数据、30 轮取前 11、线程 1、两模式各一次）、select_cutoff 缓存清理决策（1857 于 dev 后删、1885 于 test 后删、train_cutoff 不删）、artifact_id 接受 grid 关键字且网格/轮数变更必变指纹（冒烟暴露的 TypeError 防回归，共 11 项新增、全套 19 项）。
+- 本轮未动：`3-1_final_ensemble.py`、`check_predictions.py`、`1_preprocessing_by_store.py` 特征定义、v2 产物与 `docs/results_time_validation/`。
+
+## 2026-10-04 评审修复（v3 交付前）
+
+- **H1**：冒烟实验名由 `smoke_v3` 改为 `smoke_tv3`，避免与 v2 冒烟残留目录撞 manifest 指纹墙；`ensure_run` 与前缀等价失败指引均补「或删除 experiments/<实验名> 目录后重跑」。
+- **M1**：select_cutoff 特征缓存清理从「每阶段完成后」延迟到「all 全部阶段成功完成后一次性执行」（含 smoke，清理路径每次冒烟都被回归）；中断重跑时缓存仍在、走 cache_verified 快速跳过，不再重建数小时特征。
+- **L1**：选择窗评分构造改经 `metrics.make_selection_scorer`，宽度与列名（恰为 d_1..d_cutoff）在运行时强制。
+- **最终复审补丁（L1 残留）**：初版两道防线实为恒真——`selection_scope` 的首末列断言与自身切片比较（列表索引下恒真），`selection_scorer` 传给工厂的列清单是独立重建值而非实际使用值，列清单整体漂移（宽度不变）抓不住。现改为：`selection_scope` 返回实际使用的列清单并以独立写出的首末日标签锚定（d_1/d_cutoff、d_(cutoff+1)/d_(cutoff+horizon)）；`selection_scorer` 把该实际清单传入工厂断言，内容↔标签绑定真正成立（平移探针实证：d_3..d_(cutoff+2) 漂移清单现抛 AssertionError，修复前两道防线均放行）；新增单测 `test_shifted_column_list_rejected` 覆盖工厂层与端到端层。
+- **L2**：`select_rounds` 入口断言 scope/metric 仅支持 per_mode_global/WRMSSE，越界值立即报错。
+- **L3**：status.py 增显候选轮数清单。
+- **L4**：见上方「等价性验证边界」条目。
+- **L5**：候选评估 metadata.json 补 `peak_rss_mb`，与 run_model 对齐。
+- **README_time_validation.md**：按 v3 实际行为更新四处 v2 残留（日志路径、废除冻结 50:50、features/selection 按 cutoff 归置的目录结构、final 不生成 Kaggle 文件），顶部加 v3 生效说明。
