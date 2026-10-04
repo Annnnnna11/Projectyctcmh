@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-"""Cutoff-safe training and inference. Original implementation: baseline commit c75d089.
+"""Cutoff-safe retrain and inference. Original implementation: baseline commit c75d089.
 
-Use src/time_validation/run.py all for the complete authorized workflow.
-This compatibility entry point requires --stage and --store and a prepared run/cache.
+Use src/time_validation/run.py all for the complete authorized workflow (v3:
+development/test select rounds+weight on their select_cutoff, final inherits
+test's selection). This compatibility entry point requires --stage and --store
+of a prepared run; it retrains with the stage's already-selected rounds.
 """
 import sys
 from pathlib import Path

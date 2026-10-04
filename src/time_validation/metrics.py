@@ -3,6 +3,9 @@
 Definition references: Mcompetitions/M5-methods and Nixtla/datasetsforecast/m5.py.
 Exclude leading zero demand, INCLUDING the transition into the first sale.
 Each of twelve levels has dollar weights summing to one; average level scores.
+Selection-scope scoring (scheme §3): dollar weights must cover only the 28 days
+ending at the selection cutoff and the RMSSE scale only d<=cutoff history;
+`selection_wrmsse` enforces that boundary via its cutoff parameter.
 """
 import numpy as np
 import pandas as pd
@@ -61,6 +64,34 @@ class WRMSSE:
                              zero_scale=int((scale==0).sum()),zero_weight=int((weight==0).sum()),
                              positive_weight_zero_scale=int(((scale==0)&positive).sum())))
         return float(np.mean([r['wrmsse'] for r in rows])),pd.DataFrame(rows)
+
+def blend(y_recursive, y_nonrecursive, w):
+    """Blend used by the weight search: w*y_recursive + (1-w)*y_nonrecursive,
+    0 <= w <= 1; endpoints w=0 and w=1 stay in the grid (scheme 4.6)."""
+    assert 0.0 <= w <= 1.0
+    return w*y_recursive + (1.0-w)*y_nonrecursive
+
+def make_selection_scorer(meta, history, revenue, cutoff, full=False, columns=None):
+    """Selection-scope WRMSSE factory (scheme §3): the d<=cutoff bound is
+    enforced AT RUNTIME — history width must equal cutoff and, when column
+    names are supplied, they must be exactly d_1..d_cutoff. Callers must pass
+    the column list ACTUALLY used to slice history (evaluate.selection_scorer
+    forwards selection_scope's returned lists), not a rebuilt one; only then
+    does this assert bind content<->label and catch a whole-list shift of the
+    same width (review L1 + final review)."""
+    assert history.shape[1] == cutoff, 'history must be bounded by d<=cutoff'
+    if columns is not None:
+        assert list(columns) == [f'd_{d}' for d in range(1, cutoff + 1)], \
+            'history columns must be exactly d_1..d_cutoff'
+    return WRMSSE(meta, history, revenue, full=full)
+
+def selection_wrmsse(meta, history, revenue, truth, prediction, cutoff):
+    """Candidate-round / blend-weight scoring under the selection scope.
+
+    history must hold exactly the d_1..d_cutoff columns (RMSSE scale) and
+    revenue the dollar sales of the 28 days ending at cutoff (dollar weights);
+    neither may include any day after cutoff (scheme §3)."""
+    return make_selection_scorer(meta, history, revenue, cutoff).score(truth, prediction)
 
 def errors(y,p):
     e=np.asarray(p,dtype=float)-y
