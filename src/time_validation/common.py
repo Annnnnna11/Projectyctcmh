@@ -46,6 +46,8 @@ def interpreter():
     Prefer the run environment's .venv; fall back to the current interpreter
     when no .venv exists (e.g. this workspace is a code-only copy; the WSL
     run environment always has .venv and its behaviour is unchanged)."""
+    if os.environ.get('M5_PYTHON'):
+        return os.environ['M5_PYTHON']
     venv = ROOT/'.venv/bin/python'
     return str(venv) if venv.exists() else sys.executable
 
@@ -57,6 +59,14 @@ def config(smoke=False):
         # wall on the first --smoke run. The name lives here, not in config.json,
         # so a config edit cannot accidentally collide with it either (review H1).
         c.update(experiment='smoke_tv3', round_candidates=[10,20,30], stores=['CA_1'], smoke_items=48)
+    node=os.environ.get('M5_COLLAB_NODE')
+    if node:
+        allocation=json.loads((HERE/'two_machine_plan.json').read_text())
+        c['threads']=allocation['nodes'][node]['threads']
+        c['experiment']='time_validation_v3_two_machine_'+node
+    if os.environ.get('M5_COLLAB_SMOKE')=='1':
+        c.update(experiment='two_machine_smoke_verified_'+(node or 'windows'),round_candidates=[10,20,30],
+                 stores=['CA_1','CA_3'],smoke_items=48)
     return c
 
 def stage_spec(c, stage):

@@ -93,3 +93,8 @@ tail -f experiments/time_validation_v2/runner.log
 - **L4**：见上方「等价性验证边界」条目。
 - **L5**：候选评估 metadata.json 补 `peak_rss_mb`，与 run_model 对齐。
 - **README_time_validation.md**：按 v3 实际行为更新四处 v2 残留（日志路径、废除冻结 50:50、features/selection 按 cutoff 归置的目录结构、final 不生成 Kaggle 文件），顶部加 v3 生效说明。
+
+
+## 2026-10-06 两机协作分支
+
+新增 collaborate.py、handoff.py 和任务计划：Windows/WSL 8线程负责8店，Mac4线程负责CA_3、CA_4；保留10店全量目标编码与评价。增加候选/选参/重训/评分的显式阶段屏障、下一阶段许可、Mac截止前任务准入、预测证据导出及校验导入、Windows接手入口。计算契约与原生环境指纹分开：核心代码/数据/配置/类别/特征顺序和核心库版本必须一致，线程/环境构建独立记录。不导入大模型或缓存，不重写外来训练检查点。修复绘图列表输入；Python跟随当前解释器；峰值内存单位按平台换算。新增交接拒绝测试和单机双工作端三阶段小规模演练。详见 TWO_MACHINE_RUNBOOK.md。

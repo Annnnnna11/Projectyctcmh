@@ -152,6 +152,14 @@ def load_selection(c,stage):
     source=selection_source_stage(stage)
     cutoff=stage_spec(c,source)['select_cutoff']
     dest=selection_root(c,cutoff)
+    if (dest/'received.json').exists() and not (dest/'rounds_complete.json').exists():
+        from handoff import verify_received,validate_selection
+        verify_received(c,dest,'selection',source)
+        validate_selection(c,dest)
+        r=json.loads((dest/'rounds.json').read_text());w=json.loads((dest/'weights.json').read_text())
+        return dict(source_stage=source,select_cutoff=cutoff,rounds_by_mode=r['rounds_by_mode'],
+                    recursive_weight=w['recursive_weight'],nonrecursive_weight=w['nonrecursive_weight'],
+                    ensemble_wrmsse=w.get('ensemble_wrmsse'))
     candidates=sorted(c['round_candidates'])
     rounds_fp=artifact_id(c,'selection',cutoff,kind='rounds',rounds=candidates)
     assert complete(dest/'rounds_complete.json',rounds_fp,['rounds.json','round_grid.csv']),f'Run select_rounds at cutoff {cutoff} first'
@@ -202,8 +210,12 @@ def evaluate_stage(c,stage):
         parts=[]
         for store in c['stores']:
             modeldir=dest/mode/store
-            assert complete(modeldir/'complete.json',artifact_id(c,stage,cutoff,store,kind='model',mode=mode,rounds=sel['rounds_by_mode'][mode]),
-                            ['model.txt','predictions.csv','importance.csv','metadata.json'])
+            if (modeldir/'complete.json').exists():
+                assert complete(modeldir/'complete.json',artifact_id(c,stage,cutoff,store,kind='model',mode=mode,rounds=sel['rounds_by_mode'][mode]),
+                                ['model.txt','predictions.csv','importance.csv','metadata.json'])
+            else:
+                from handoff import verify_received
+                verify_received(c,modeldir,'retrain',stage,store,mode)
             metadata=json.loads((modeldir/'metadata.json').read_text())
             assert metadata['train_last_day']==cutoff and metadata['predict_days']==[cutoff+1,cutoff+28]
             assert metadata['rounds']==sel['rounds_by_mode'][mode]
@@ -237,7 +249,7 @@ def evaluate_stage(c,stage):
                 analysis.append(dict(model=name,dimension='horizon',group=str(h+1),**errors(truth[:,h],pred[:,h])))
         atomic_csv(pd.DataFrame(scores),out/'scores.csv')
         atomic_csv(pd.DataFrame(analysis),out/'error_analysis.csv')
-        plots(scores,analysis,out)
+        plots(scores,pd.DataFrame(analysis),out)
         event('scores',stage=stage,scores=scores)
     else:
         event('final_integrity_only',stage=stage,rows=integrity['rows'],days=integrity['days'],

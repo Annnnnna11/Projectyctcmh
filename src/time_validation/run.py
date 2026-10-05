@@ -202,6 +202,8 @@ def main():
     parser.add_argument('--store'); parser.add_argument('--mode',choices=['recursive','nonrecursive'])
     parser.add_argument('--smoke',action='store_true')
     args=parser.parse_args(); c=config(args.smoke)
+    if c['experiment'].startswith('time_validation_v3_two_machine') and args.action in ['all','stage']:
+        raise RuntimeError('Use collaborate.py phase commands for this two-machine experiment; run.py all/stage would bypass task ownership and handoff barriers.')
     if args.action in ['all','stage']:
         orchestrate(c,'all' if args.action=='all' else args.stage)
     elif args.action=='check':

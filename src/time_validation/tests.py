@@ -135,7 +135,7 @@ class Checks(unittest.TestCase):
     # --- v3 additions (scheme 4.9) ---
     def test_config_v3(self):
         c=config()
-        self.assertEqual(c['experiment'],'time_validation_v3')
+        self.assertEqual(c['experiment'],'time_validation_v3_two_machine')
         for legacy_key in ('selection','ensemble','rounds'):  # old-scheme keys must be gone
             self.assertNotIn(legacy_key,c)
         self.assertEqual(c['round_candidates'],sorted(c['round_candidates']))

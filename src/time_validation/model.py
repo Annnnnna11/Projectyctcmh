@@ -10,6 +10,7 @@ import gc
 import json
 import os
 import resource
+import sys
 import time
 import lightgbm as lgb
 import numpy as np
@@ -175,7 +176,7 @@ def evaluate_round_candidates(c,select_cutoff,store,mode):
     atomic_json(dict(select_cutoff=select_cutoff,store=store,mode=mode,cap=cap,candidates=candidates,
                      train_rows=None if train_seconds is None else train_rows,
                      predict_days=[select_cutoff+1,select_cutoff+28],
-                     peak_rss_mb=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024,
+                     peak_rss_mb=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024**2 if sys.platform=='darwin' else 1024),
                      prefix_equivalence=True,note='one training to the cap; candidates scored via model.predict(num_iteration=k)'),dest/'metadata.json')
     checkpoint(dest/'complete.json',fp,products)
     if c.get('keep_selection_models'):
@@ -214,7 +215,7 @@ def run_model(c,stage,store,mode,rounds):
                      train_first_day=c.get('first_day',1),train_last_day=cutoff,predict_days=[cutoff+1,cutoff+28],
                      train_seconds=train_seconds,predict_seconds=time.monotonic()-predict_start,
                      total_seconds=time.monotonic()-started,
-                     peak_rss_mb=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024),dest/'metadata.json')
+                     peak_rss_mb=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024**2 if sys.platform=='darwin' else 1024)),dest/'metadata.json')
     checkpoint(dest/'complete.json',fp,products)
     event('model_complete',stage=stage,store=store,mode=mode,seconds=time.monotonic()-started,train_seconds=train_seconds)
 

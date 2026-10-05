@@ -41,3 +41,7 @@ __pycache__/
 output/*
 !output/before_ensemble/
 experiments/
+
+# Ignore environment symlinks and exchange artifacts
+.venv
+transfers/

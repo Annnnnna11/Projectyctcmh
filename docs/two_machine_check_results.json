@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-06",
+  "unit_tests": 20,
+  "handoff_tests": 5,
+  "integration": {
+    "state": "complete",
+    "seconds": 134.576274394989,
+    "scope": "single-host two-worker smoke; CA_1+CA_3 x 48 items, all three stages"
+  },
+  "prefix_8_thread": {
+    "event": "prefix_equivalence_verified",
+    "time": "2026-10-06T01:30:40+0800",
+    "cutoff": 1857,
+    "store": "CA_1",
+    "gaps": {
+      "nonrecursive": 0.0,
+      "recursive": 0.0
+    }
+  },
+  "scope": "single Linux host, independently fingerprinted Windows-role 8-thread and Mac-role 4-thread workers; CA_1 and CA_3 each 48 items",
+  "limitation": "Not a native Mac run of the new branch; Mac must verify the new worker entry point.",
+  "formal_training_started": false,
+  "development": {
+    "days": [
+      1886,
+      1913
+    ],
+    "ensemble_weights": {
+      "nonrecursive": 1.0,
+      "recursive": 0.0
+    },
+    "finite": true,
+    "full_coverage": false,
+    "horizon": 28,
+    "kaggle_file": false,
+    "nonnegative": true,
+    "rounds_by_mode": {
+      "nonrecursive": 30,
+      "recursive": 30
+    },
+    "rows": 96,
+    "selection_source": "development",
+    "stores": 2,
+    "unique_ids": true
+  },
+  "test": {
+    "days": [
+      1914,
+      1941
+    ],
+    "ensemble_weights": {
+      "nonrecursive": 1.0,
+      "recursive": 0.0
+    },
+    "finite": true,
+    "full_coverage": false,
+    "horizon": 28,
+    "kaggle_file": false,
+    "nonnegative": true,
+    "rounds_by_mode": {
+      "nonrecursive": 30,
+      "recursive": 30
+    },
+    "rows": 96,
+    "selection_source": "test",
+    "stores": 2,
+    "unique_ids": true
+  },
+  "final": {
+    "days": [
+      1942,
+      1969
+    ],
+    "ensemble_weights": {
+      "nonrecursive": 1.0,
+      "recursive": 0.0
+    },
+    "finite": true,
+    "full_coverage": false,
+    "horizon": 28,
+    "kaggle_file": false,
+    "nonnegative": true,
+    "rounds_by_mode": {
+      "nonrecursive": 30,
+      "recursive": 30
+    },
+    "rows": 96,
+    "selection_source": "test",
+    "stores": 2,
+    "unique_ids": true
+  }
+}
