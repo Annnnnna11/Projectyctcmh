@@ -1,0 +1,52 @@
+{
+  "model_binary_in_git": false,
+  "model_count": 60,
+  "prediction_csv_in_git": false,
+  "windows": [
+    {
+      "dates": [
+        "2016-03-28",
+        "2016-04-24"
+      ],
+      "predict_days": [
+        1886,
+        1913
+      ],
+      "rows": 30490,
+      "source_checkpoint_sha256": "d497ad826cd469e19f938a8178660e36968cb04f6bd3d0ce02c17c2af53daa0d",
+      "stage": "development",
+      "stores": 10,
+      "train_cutoff": 1885
+    },
+    {
+      "dates": [
+        "2016-04-25",
+        "2016-05-22"
+      ],
+      "predict_days": [
+        1914,
+        1941
+      ],
+      "rows": 30490,
+      "source_checkpoint_sha256": "50ea70554a4cf66cfc45be35cd4f0c712d5ca60af77d9f9b15090f4d33de6d7e",
+      "stage": "test",
+      "stores": 10,
+      "train_cutoff": 1913
+    },
+    {
+      "dates": [
+        "2016-05-23",
+        "2016-06-19"
+      ],
+      "predict_days": [
+        1942,
+        1969
+      ],
+      "rows": 30490,
+      "source_checkpoint_sha256": "da7f967bb0d339644bdeabe60d47d54f93ccf26155ab8f07cdcb4ac0b0ec795d",
+      "stage": "final",
+      "stores": 10,
+      "train_cutoff": 1941
+    }
+  ]
+}

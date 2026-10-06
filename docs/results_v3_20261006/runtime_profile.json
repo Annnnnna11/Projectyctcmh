@@ -1,0 +1,8 @@
+{
+  "adapter": "/mnt/d/\u9999\u6e2f\u5b66\u4e60\u76f8\u5173\u6587\u4ef6/5054-miniproject/.m5_agent_staging/thread12_runtime/sitecustomize.py",
+  "adapter_sha256": "0e9824037f075fb745f327abdd0801511cf459d97b8b812dfe6b1c32a6f0d148",
+  "policy": "Serial; previous predictions retain producer provenance; new models use 12 threads; unchanged computational code/data/parameters",
+  "source_root": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows",
+  "supervisor_sha256": "33720390df9bf8f7df39293ea6181fbcf082d62e9e02fc9811799ed63b214da7",
+  "threads": 12
+}

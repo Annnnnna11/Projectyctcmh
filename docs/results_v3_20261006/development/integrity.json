@@ -1,0 +1,23 @@
+{
+  "days": [
+    1886,
+    1913
+  ],
+  "ensemble_weights": {
+    "nonrecursive": 0.6,
+    "recursive": 0.4
+  },
+  "finite": true,
+  "full_coverage": true,
+  "horizon": 28,
+  "kaggle_file": false,
+  "nonnegative": true,
+  "rounds_by_mode": {
+    "nonrecursive": 500,
+    "recursive": 500
+  },
+  "rows": 30490,
+  "selection_source": "development",
+  "stores": 10,
+  "unique_ids": true
+}

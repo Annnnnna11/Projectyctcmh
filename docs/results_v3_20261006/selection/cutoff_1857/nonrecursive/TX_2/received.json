@@ -1,0 +1,298 @@
+{
+  "bundle_sha256": "474197c8b3acdedfb0849b7cda5e9d8a8daf57e378401d885561490454b704c1",
+  "contract": {
+    "code": {
+      "src/1_preprocessing_by_store.py": "c7c5af56df50f4fc7cb9ed370f548073145e220ebee73da416a6480776656456",
+      "src/time_validation/collaborate.py": "706235478dc3703414261e1b359e173eacc86570d6bcb9b5891e88cfabba3a01",
+      "src/time_validation/common.py": "b6deae8403d7274506dc7b21b0fa25c9f96ef1f3c376cbccdab228c0d847c1bf",
+      "src/time_validation/evaluate.py": "54bd237cc34e9a6efdd9a7ef659b60fbda21837efc2326acb2e9e556aef37fa2",
+      "src/time_validation/external_reference_check.py": "86059db616e1fd176c3075e248cc52f7319c67abc70177d793898c5da664db0f",
+      "src/time_validation/features.py": "a566c059c86878ae4436979d41ea0fda6dcee800ceae00115522899977b33de7",
+      "src/time_validation/handoff.py": "a3ca1278638dff485ffeafbffba7225786a64ee4a2c2fa7bb049dd4fac9549d1",
+      "src/time_validation/launch.py": "dd431b1e1fb95b7ec6767d6cbdcba5d17376fc30d1a6522ee9b98971ab3fd28e",
+      "src/time_validation/metrics.py": "bd1cf9719799c9923662774f0f3f4301a3121c13e4cf3488d06c99e9a31f1952",
+      "src/time_validation/model.py": "988bff981858b137cd36574ab764340c54b7094f6f81596857beb193a70c6ab7",
+      "src/time_validation/run.py": "a712977e456bd4727934de86101aea9fc4b69ff576856b5701585ceb93708d9f",
+      "src/time_validation/status.py": "1478783347515b000a17863abce19b45c87732882c971ee3bc1306828dda79e5",
+      "src/time_validation/tests.py": "05d5af118b45437b5aa9008522e12a43a8d5d0573590ee911bbbca6915a18ce2",
+      "src/time_validation/tests_handoff.py": "52768f495148e16e430f16d50a950fa1414dddd33e4cb1197d8a4374f2df0f1f",
+      "src/time_validation/two_machine_smoke.py": "b46bda0f0b8c79a1bc80ef8df0562094dd2a1eda14a36781c41f2033d991a948"
+    },
+    "config": {
+      "early_stopping": {
+        "enabled": false,
+        "stopping_rounds": 100
+      },
+      "ensemble_grid": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "first_day": 1,
+      "horizon": 28,
+      "mode_params": {
+        "nonrecursive": {
+          "min_data_in_leaf": 255,
+          "num_leaves": 255,
+          "seed": 1995
+        },
+        "recursive": {
+          "min_data_in_leaf": 4095,
+          "num_leaves": 2047,
+          "seed": 42
+        }
+      },
+      "modes": [
+        "nonrecursive",
+        "recursive"
+      ],
+      "params": {
+        "boost_from_average": false,
+        "boosting_type": "gbdt",
+        "feature_fraction": 0.5,
+        "force_col_wise": true,
+        "learning_rate": 0.015,
+        "max_bin": 100,
+        "metric": "rmse",
+        "objective": "tweedie",
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "tweedie_variance_power": 1.1,
+        "verbosity": -1
+      },
+      "prefix_fallback": false,
+      "price_calendar_policy": "Competition-known covariates through cutoff+28 only; weekly price rows restricted to weeks intersecting this range.",
+      "round_candidates": [
+        500,
+        1000,
+        1500,
+        2000,
+        2500,
+        3000
+      ],
+      "round_selection": {
+        "metric": "WRMSSE",
+        "scope": "per_mode_global"
+      },
+      "stages": {
+        "development": {
+          "select_cutoff": 1857,
+          "train_cutoff": 1885
+        },
+        "final": {
+          "train_cutoff": 1941
+        },
+        "test": {
+          "select_cutoff": 1885,
+          "train_cutoff": 1913
+        }
+      },
+      "stores": [
+        "CA_1",
+        "CA_2",
+        "CA_3",
+        "CA_4",
+        "TX_1",
+        "TX_2",
+        "TX_3",
+        "WI_1",
+        "WI_2",
+        "WI_3"
+      ],
+      "zero_scale_policy": "exact prediction -> 0; nonzero MSE -> infinity; zero-weight series contribute 0; zero total revenue fails"
+    },
+    "core_versions": {
+      "lightgbm": "4.7.0",
+      "numpy": "2.2.5",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.7.2",
+      "scipy": "1.15.3"
+    },
+    "inputs": {
+      "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+      "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+      "sales_train_validation.csv": "f368e66ed1dbecb48b2cc8fc589bf68b3deddbbb36bf5c88b4d6d0a09b9b6724",
+      "sample_submission.csv": "eb7597afbec367475ef25dc6dbbc009b8faa47fa2107252c72a029e3cdf72343",
+      "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+    },
+    "plan_id": "m5-v3-two-machine-20261006",
+    "task_plan": {
+      "coordinator": "windows",
+      "nodes": {
+        "mac": {
+          "admission_seconds": {
+            "nonrecursive": 1800,
+            "prepare": 300,
+            "recursive": 3600
+          },
+          "stop_at": "2026-10-06T17:00:00+08:00",
+          "stores": [
+            "CA_3",
+            "CA_4"
+          ],
+          "threads": 4
+        },
+        "windows": {
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "TX_1",
+            "TX_2",
+            "TX_3",
+            "WI_1",
+            "WI_2",
+            "WI_3"
+          ],
+          "threads": 8
+        }
+      },
+      "plan_id": "m5-v3-two-machine-20261006"
+    }
+  },
+  "files": {
+    "feature_contract.json": "826c7e93996316786c89c2e3cda27d8f2873073da704846722f334546ee5394c",
+    "metadata.json": "318534d4f922e452f168274660e3c5387d5ee3560878c82d649733d982280e81",
+    "predictions_1000.csv": "c1e13ec3ca46b1edfa99e2c5e4aa4ec44d44b437bb10c00cd3ef3a4128b2fa02",
+    "predictions_1500.csv": "8fd6bd29f714760d05c7f9d0a37df50593e973c25fadc0b9e9a9eab561926931",
+    "predictions_2000.csv": "4cd912a56fa33e5dea1c84fb8b7e8e4b5edab1abc08141d4fdd6bfd2e946a466",
+    "predictions_2500.csv": "710e53163a1068694ef5231c9736215f27f33d61eaf4e746f4765167872ab88c",
+    "predictions_3000.csv": "a58297b2958f95fb2308720b6ccaea909e6bbb2d8b35485aef2b7bf8a6fef9ea",
+    "predictions_500.csv": "74ec0de34ef98d6708867a72b71336f1b6ab5b292fc7307459c1bbdd8e377be4",
+    "timings.json": "f7fef0a890ba35085736d6cf5221aa91b57ee27c75beeed19b6b08722db427f7"
+  },
+  "mode": "nonrecursive",
+  "phase": "candidates",
+  "source_manifest": {
+    "code": {
+      "src/1_preprocessing_by_store.py": "c7c5af56df50f4fc7cb9ed370f548073145e220ebee73da416a6480776656456",
+      "src/time_validation/collaborate.py": "706235478dc3703414261e1b359e173eacc86570d6bcb9b5891e88cfabba3a01",
+      "src/time_validation/common.py": "b6deae8403d7274506dc7b21b0fa25c9f96ef1f3c376cbccdab228c0d847c1bf",
+      "src/time_validation/evaluate.py": "54bd237cc34e9a6efdd9a7ef659b60fbda21837efc2326acb2e9e556aef37fa2",
+      "src/time_validation/external_reference_check.py": "86059db616e1fd176c3075e248cc52f7319c67abc70177d793898c5da664db0f",
+      "src/time_validation/features.py": "a566c059c86878ae4436979d41ea0fda6dcee800ceae00115522899977b33de7",
+      "src/time_validation/handoff.py": "a3ca1278638dff485ffeafbffba7225786a64ee4a2c2fa7bb049dd4fac9549d1",
+      "src/time_validation/launch.py": "dd431b1e1fb95b7ec6767d6cbdcba5d17376fc30d1a6522ee9b98971ab3fd28e",
+      "src/time_validation/metrics.py": "bd1cf9719799c9923662774f0f3f4301a3121c13e4cf3488d06c99e9a31f1952",
+      "src/time_validation/model.py": "988bff981858b137cd36574ab764340c54b7094f6f81596857beb193a70c6ab7",
+      "src/time_validation/run.py": "a712977e456bd4727934de86101aea9fc4b69ff576856b5701585ceb93708d9f",
+      "src/time_validation/status.py": "1478783347515b000a17863abce19b45c87732882c971ee3bc1306828dda79e5",
+      "src/time_validation/tests.py": "05d5af118b45437b5aa9008522e12a43a8d5d0573590ee911bbbca6915a18ce2",
+      "src/time_validation/tests_handoff.py": "52768f495148e16e430f16d50a950fa1414dddd33e4cb1197d8a4374f2df0f1f",
+      "src/time_validation/two_machine_smoke.py": "b46bda0f0b8c79a1bc80ef8df0562094dd2a1eda14a36781c41f2033d991a948"
+    },
+    "config": {
+      "early_stopping": {
+        "enabled": false,
+        "stopping_rounds": 100
+      },
+      "ensemble_grid": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "experiment": "time_validation_v3_two_machine_windows",
+      "first_day": 1,
+      "horizon": 28,
+      "mode_params": {
+        "nonrecursive": {
+          "min_data_in_leaf": 255,
+          "num_leaves": 255,
+          "seed": 1995
+        },
+        "recursive": {
+          "min_data_in_leaf": 4095,
+          "num_leaves": 2047,
+          "seed": 42
+        }
+      },
+      "modes": [
+        "nonrecursive",
+        "recursive"
+      ],
+      "params": {
+        "boost_from_average": false,
+        "boosting_type": "gbdt",
+        "feature_fraction": 0.5,
+        "force_col_wise": true,
+        "learning_rate": 0.015,
+        "max_bin": 100,
+        "metric": "rmse",
+        "objective": "tweedie",
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "tweedie_variance_power": 1.1,
+        "verbosity": -1
+      },
+      "prefix_fallback": false,
+      "price_calendar_policy": "Competition-known covariates through cutoff+28 only; weekly price rows restricted to weeks intersecting this range.",
+      "round_candidates": [
+        500,
+        1000,
+        1500,
+        2000,
+        2500,
+        3000
+      ],
+      "round_selection": {
+        "metric": "WRMSSE",
+        "scope": "per_mode_global"
+      },
+      "stages": {
+        "development": {
+          "select_cutoff": 1857,
+          "train_cutoff": 1885
+        },
+        "final": {
+          "train_cutoff": 1941
+        },
+        "test": {
+          "select_cutoff": 1885,
+          "train_cutoff": 1913
+        }
+      },
+      "stores": [
+        "CA_1",
+        "CA_2",
+        "CA_3",
+        "CA_4",
+        "TX_1",
+        "TX_2",
+        "TX_3",
+        "WI_1",
+        "WI_2",
+        "WI_3"
+      ],
+      "threads": 8,
+      "zero_scale_policy": "exact prediction -> 0; nonzero MSE -> infinity; zero-weight series contribute 0; zero total revenue fails"
+    },
+    "dependencies": "cloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\nfonttools==4.66.1\njoblib==1.6.0\nkiwisolver==1.5.1\nlightgbm==4.7.0\nmatplotlib==3.11.2\nnarwhals==2.26.0\nnumpy==2.2.5\npackaging==26.3\npandas==2.3.3\npillow==12.3.0\npyparsing==3.3.3\npython-dateutil==2.9.0.post0\npytz==2026.4\nscikit-learn==1.7.2\nscipy==1.15.3\nsix==1.17.0\nthreadpoolctl==3.7.0\ntzdata==2026.4\n",
+    "fingerprint": "d299784ffb56b5e9172c95d41eb145cdad5f860db785452609090f12c5de8970",
+    "git_commit": "ec78fdb8cbc316c0ab2842d91898f399946477c1",
+    "inputs": {
+      "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+      "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+      "sales_train_validation.csv": "f368e66ed1dbecb48b2cc8fc589bf68b3deddbbb36bf5c88b4d6d0a09b9b6724",
+      "sample_submission.csv": "eb7597afbec367475ef25dc6dbbc009b8faa47fa2107252c72a029e3cdf72343",
+      "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+    }
+  },
+  "source_node": "windows",
+  "stage": "development",
+  "store": "TX_2"
+}

@@ -1,0 +1,9 @@
+{
+  "artifacts": {
+    "importance.csv": "921f74e67533ba2c7557ff01611411886d380c2b851f4bfef3c34a34e076f103",
+    "metadata.json": "e4a662b9fc58d3609367a2daadaba53adf385412471686031c7ae543509e1620",
+    "model.txt": "65bf4eca11aa9dd6c527f04dce243c21c83d08d3f984c63df0bf84ff6d5e9b6d",
+    "predictions.csv": "f3eddc6e1528d531303678fa2f8f3e07cd7d1e2d24ed5591ef657882b54349cb"
+  },
+  "fingerprint": "458d6acca9470f95080912158fcd97b79fa2b3d31870207541107d1d7e2545f2"
+}

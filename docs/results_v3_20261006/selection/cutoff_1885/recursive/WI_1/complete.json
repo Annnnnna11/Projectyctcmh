@@ -1,0 +1,13 @@
+{
+  "artifacts": {
+    "metadata.json": "c1d11f8185afaf65a0070c3b01e4f498aa5e0ee195c5d5e6c46648df018e4283",
+    "predictions_1000.csv": "47e34ad3e7d41d3299213b585736523ecc547fe1c7bc4363eb0b19aa4bcf58e7",
+    "predictions_1500.csv": "61c3bfccf3e64583bdbeb9a800e68cb1a5730f04a37498fabcb9535002ff5c00",
+    "predictions_2000.csv": "db826bdc5af7d4748c567498a369dbceac814c913d4d486c3942254487243ea9",
+    "predictions_2500.csv": "51c2d4da78d17a751b88235a10cb14163e329ebb4892e33399eb3acffb757a46",
+    "predictions_3000.csv": "dbfa4b78440bd1fd19a02e8b74d109750e59ce22ff479c048ffd096f997661b0",
+    "predictions_500.csv": "f4a1c5e194ca5935c32244706e713b5d1c065fd1c8d2fb8d2aa6a80661dddef8",
+    "timings.json": "13aadd396eb1e5afb3400078600145b4873b620d5e9b6c38cef13ef911c943a7"
+  },
+  "fingerprint": "88cef64eaccaddf6ab0d76cb052ff5cf8fdfa068843f436b0152ec6a077e4d36"
+}

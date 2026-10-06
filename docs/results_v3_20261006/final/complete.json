@@ -1,0 +1,36 @@
+{
+  "artifacts": {
+    "ensemble.csv": "33b7081989dd66f596526100f9cec18c9fea6c5d3c1c31c2ebba18f5803177da",
+    "importance.csv": "1b26a5bd5ed15abfd58fbb0888e4dc921a82e381e441c3c9760a07ca2f78b227",
+    "integrity.json": "e3dad4fc65ec7172896cc498fef5f800835b26443d34766d1b06ee44eb4a6683",
+    "last_week.csv": "1cbdfec3c569fc0790d1add00173ece7249435072a28d14ae38d7c6360e954cd",
+    "nonrecursive.csv": "e786d0f67f89f610e8a2dc8d8fa51dcbf5fc7debd9526d3777f75609c4585b4d",
+    "nonrecursive_importance.png": "35d0b141b7bc3d87a5179bcf53efca2d28ccbfbd810dd1a542c6da48e959de80",
+    "recursive.csv": "d76d810ed8d881db343c44f52103ffa7c4586322588465c2ce276cf452b25fea",
+    "recursive_importance.png": "8ab1299db4e609a791b55dcfb329ba15b83ff722605882e1d2e7c99f31267e2e",
+    "timings.csv": "0e598e0c0d41e15fc723e942e0baaf2096eec3584ebe9ca7d5a99878bb55ed8c",
+    "weekday_mean_4weeks.csv": "f5dee40b9bbad742b2a4b61ff1906798f02dcc23df4cba0a3c5d3b5f79192749"
+  },
+  "days": [
+    1942,
+    1969
+  ],
+  "ensemble_weights": {
+    "nonrecursive": 0.6,
+    "recursive": 0.4
+  },
+  "fingerprint": "d4d5ae7c7278bc531420b9076987b85081513999431451bdd4783f6c5af02c5f",
+  "finite": true,
+  "full_coverage": true,
+  "horizon": 28,
+  "kaggle_file": false,
+  "nonnegative": true,
+  "rounds_by_mode": {
+    "nonrecursive": 1000,
+    "recursive": 500
+  },
+  "rows": 30490,
+  "selection_source": "test",
+  "stores": 10,
+  "unique_ids": true
+}

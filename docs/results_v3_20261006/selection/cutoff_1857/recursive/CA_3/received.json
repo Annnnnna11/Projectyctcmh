@@ -1,0 +1,298 @@
+{
+  "bundle_sha256": "97bf243a641e6e2c3a69b99c9ff133a3b4fe3f608beed540fbf1530dd9e0ed74",
+  "contract": {
+    "code": {
+      "src/1_preprocessing_by_store.py": "c7c5af56df50f4fc7cb9ed370f548073145e220ebee73da416a6480776656456",
+      "src/time_validation/collaborate.py": "706235478dc3703414261e1b359e173eacc86570d6bcb9b5891e88cfabba3a01",
+      "src/time_validation/common.py": "b6deae8403d7274506dc7b21b0fa25c9f96ef1f3c376cbccdab228c0d847c1bf",
+      "src/time_validation/evaluate.py": "54bd237cc34e9a6efdd9a7ef659b60fbda21837efc2326acb2e9e556aef37fa2",
+      "src/time_validation/external_reference_check.py": "86059db616e1fd176c3075e248cc52f7319c67abc70177d793898c5da664db0f",
+      "src/time_validation/features.py": "a566c059c86878ae4436979d41ea0fda6dcee800ceae00115522899977b33de7",
+      "src/time_validation/handoff.py": "a3ca1278638dff485ffeafbffba7225786a64ee4a2c2fa7bb049dd4fac9549d1",
+      "src/time_validation/launch.py": "dd431b1e1fb95b7ec6767d6cbdcba5d17376fc30d1a6522ee9b98971ab3fd28e",
+      "src/time_validation/metrics.py": "bd1cf9719799c9923662774f0f3f4301a3121c13e4cf3488d06c99e9a31f1952",
+      "src/time_validation/model.py": "988bff981858b137cd36574ab764340c54b7094f6f81596857beb193a70c6ab7",
+      "src/time_validation/run.py": "a712977e456bd4727934de86101aea9fc4b69ff576856b5701585ceb93708d9f",
+      "src/time_validation/status.py": "1478783347515b000a17863abce19b45c87732882c971ee3bc1306828dda79e5",
+      "src/time_validation/tests.py": "05d5af118b45437b5aa9008522e12a43a8d5d0573590ee911bbbca6915a18ce2",
+      "src/time_validation/tests_handoff.py": "52768f495148e16e430f16d50a950fa1414dddd33e4cb1197d8a4374f2df0f1f",
+      "src/time_validation/two_machine_smoke.py": "b46bda0f0b8c79a1bc80ef8df0562094dd2a1eda14a36781c41f2033d991a948"
+    },
+    "config": {
+      "early_stopping": {
+        "enabled": false,
+        "stopping_rounds": 100
+      },
+      "ensemble_grid": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "first_day": 1,
+      "horizon": 28,
+      "mode_params": {
+        "nonrecursive": {
+          "min_data_in_leaf": 255,
+          "num_leaves": 255,
+          "seed": 1995
+        },
+        "recursive": {
+          "min_data_in_leaf": 4095,
+          "num_leaves": 2047,
+          "seed": 42
+        }
+      },
+      "modes": [
+        "nonrecursive",
+        "recursive"
+      ],
+      "params": {
+        "boost_from_average": false,
+        "boosting_type": "gbdt",
+        "feature_fraction": 0.5,
+        "force_col_wise": true,
+        "learning_rate": 0.015,
+        "max_bin": 100,
+        "metric": "rmse",
+        "objective": "tweedie",
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "tweedie_variance_power": 1.1,
+        "verbosity": -1
+      },
+      "prefix_fallback": false,
+      "price_calendar_policy": "Competition-known covariates through cutoff+28 only; weekly price rows restricted to weeks intersecting this range.",
+      "round_candidates": [
+        500,
+        1000,
+        1500,
+        2000,
+        2500,
+        3000
+      ],
+      "round_selection": {
+        "metric": "WRMSSE",
+        "scope": "per_mode_global"
+      },
+      "stages": {
+        "development": {
+          "select_cutoff": 1857,
+          "train_cutoff": 1885
+        },
+        "final": {
+          "train_cutoff": 1941
+        },
+        "test": {
+          "select_cutoff": 1885,
+          "train_cutoff": 1913
+        }
+      },
+      "stores": [
+        "CA_1",
+        "CA_2",
+        "CA_3",
+        "CA_4",
+        "TX_1",
+        "TX_2",
+        "TX_3",
+        "WI_1",
+        "WI_2",
+        "WI_3"
+      ],
+      "zero_scale_policy": "exact prediction -> 0; nonzero MSE -> infinity; zero-weight series contribute 0; zero total revenue fails"
+    },
+    "core_versions": {
+      "lightgbm": "4.7.0",
+      "numpy": "2.2.5",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.7.2",
+      "scipy": "1.15.3"
+    },
+    "inputs": {
+      "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+      "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+      "sales_train_validation.csv": "f368e66ed1dbecb48b2cc8fc589bf68b3deddbbb36bf5c88b4d6d0a09b9b6724",
+      "sample_submission.csv": "eb7597afbec367475ef25dc6dbbc009b8faa47fa2107252c72a029e3cdf72343",
+      "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+    },
+    "plan_id": "m5-v3-two-machine-20261006",
+    "task_plan": {
+      "coordinator": "windows",
+      "nodes": {
+        "mac": {
+          "admission_seconds": {
+            "nonrecursive": 1800,
+            "prepare": 300,
+            "recursive": 3600
+          },
+          "stop_at": "2026-10-06T17:00:00+08:00",
+          "stores": [
+            "CA_3",
+            "CA_4"
+          ],
+          "threads": 4
+        },
+        "windows": {
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "TX_1",
+            "TX_2",
+            "TX_3",
+            "WI_1",
+            "WI_2",
+            "WI_3"
+          ],
+          "threads": 8
+        }
+      },
+      "plan_id": "m5-v3-two-machine-20261006"
+    }
+  },
+  "files": {
+    "feature_contract.json": "1cf876a5696a340442e473d74d60ce4901cd9accd98c720701b09f3500f3a574",
+    "metadata.json": "72bd3e0bbd445de6ee6fa8e88102fc6fe628191798f5f23e2188a9b12552eef5",
+    "predictions_1000.csv": "e39902c16c490a326f7d9877f6418dcd82b4cf152b6b21cfdc6f00acab288330",
+    "predictions_1500.csv": "7fec365cf35159eab30093f48871908cda9e2eb86c63a486a8b20c0d7d839ec4",
+    "predictions_2000.csv": "d18d2792753bcabc5c0af0b03f36b362c32beac78a806c2905949ed10d32435d",
+    "predictions_2500.csv": "f8bcabdbf7651a6e3512d176c70e217311119d10b0f5b710034ca71acd152f17",
+    "predictions_3000.csv": "f380173bbfd4816bee1fde22d4251e07a0a55fa476750cad14aad290efdefed5",
+    "predictions_500.csv": "f175721608cd1a10f2e47630108de3fd0ef56a65c1737005a8506e3cd8c273c0",
+    "timings.json": "5094e842ebf0893f1a62827a42b635895620ffd321b6c317216489052ac42e94"
+  },
+  "mode": "recursive",
+  "phase": "candidates",
+  "source_manifest": {
+    "code": {
+      "src/1_preprocessing_by_store.py": "c7c5af56df50f4fc7cb9ed370f548073145e220ebee73da416a6480776656456",
+      "src/time_validation/collaborate.py": "706235478dc3703414261e1b359e173eacc86570d6bcb9b5891e88cfabba3a01",
+      "src/time_validation/common.py": "b6deae8403d7274506dc7b21b0fa25c9f96ef1f3c376cbccdab228c0d847c1bf",
+      "src/time_validation/evaluate.py": "54bd237cc34e9a6efdd9a7ef659b60fbda21837efc2326acb2e9e556aef37fa2",
+      "src/time_validation/external_reference_check.py": "86059db616e1fd176c3075e248cc52f7319c67abc70177d793898c5da664db0f",
+      "src/time_validation/features.py": "a566c059c86878ae4436979d41ea0fda6dcee800ceae00115522899977b33de7",
+      "src/time_validation/handoff.py": "a3ca1278638dff485ffeafbffba7225786a64ee4a2c2fa7bb049dd4fac9549d1",
+      "src/time_validation/launch.py": "dd431b1e1fb95b7ec6767d6cbdcba5d17376fc30d1a6522ee9b98971ab3fd28e",
+      "src/time_validation/metrics.py": "bd1cf9719799c9923662774f0f3f4301a3121c13e4cf3488d06c99e9a31f1952",
+      "src/time_validation/model.py": "988bff981858b137cd36574ab764340c54b7094f6f81596857beb193a70c6ab7",
+      "src/time_validation/run.py": "a712977e456bd4727934de86101aea9fc4b69ff576856b5701585ceb93708d9f",
+      "src/time_validation/status.py": "1478783347515b000a17863abce19b45c87732882c971ee3bc1306828dda79e5",
+      "src/time_validation/tests.py": "05d5af118b45437b5aa9008522e12a43a8d5d0573590ee911bbbca6915a18ce2",
+      "src/time_validation/tests_handoff.py": "52768f495148e16e430f16d50a950fa1414dddd33e4cb1197d8a4374f2df0f1f",
+      "src/time_validation/two_machine_smoke.py": "b46bda0f0b8c79a1bc80ef8df0562094dd2a1eda14a36781c41f2033d991a948"
+    },
+    "config": {
+      "early_stopping": {
+        "enabled": false,
+        "stopping_rounds": 100
+      },
+      "ensemble_grid": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "experiment": "time_validation_v3_two_machine_mac",
+      "first_day": 1,
+      "horizon": 28,
+      "mode_params": {
+        "nonrecursive": {
+          "min_data_in_leaf": 255,
+          "num_leaves": 255,
+          "seed": 1995
+        },
+        "recursive": {
+          "min_data_in_leaf": 4095,
+          "num_leaves": 2047,
+          "seed": 42
+        }
+      },
+      "modes": [
+        "nonrecursive",
+        "recursive"
+      ],
+      "params": {
+        "boost_from_average": false,
+        "boosting_type": "gbdt",
+        "feature_fraction": 0.5,
+        "force_col_wise": true,
+        "learning_rate": 0.015,
+        "max_bin": 100,
+        "metric": "rmse",
+        "objective": "tweedie",
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "tweedie_variance_power": 1.1,
+        "verbosity": -1
+      },
+      "prefix_fallback": false,
+      "price_calendar_policy": "Competition-known covariates through cutoff+28 only; weekly price rows restricted to weeks intersecting this range.",
+      "round_candidates": [
+        500,
+        1000,
+        1500,
+        2000,
+        2500,
+        3000
+      ],
+      "round_selection": {
+        "metric": "WRMSSE",
+        "scope": "per_mode_global"
+      },
+      "stages": {
+        "development": {
+          "select_cutoff": 1857,
+          "train_cutoff": 1885
+        },
+        "final": {
+          "train_cutoff": 1941
+        },
+        "test": {
+          "select_cutoff": 1885,
+          "train_cutoff": 1913
+        }
+      },
+      "stores": [
+        "CA_1",
+        "CA_2",
+        "CA_3",
+        "CA_4",
+        "TX_1",
+        "TX_2",
+        "TX_3",
+        "WI_1",
+        "WI_2",
+        "WI_3"
+      ],
+      "threads": 4,
+      "zero_scale_policy": "exact prediction -> 0; nonzero MSE -> infinity; zero-weight series contribute 0; zero total revenue fails"
+    },
+    "dependencies": "cloudpickle @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_cloudpickle_1765303462/work\ncontourpy @ file:///Users/runner/miniforge3/conda-bld/bld/rattler-build_contourpy_1789746846/work\ncycler @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_cycler_1764466758/work\nfonttools @ file:///Users/runner/miniforge3/conda-bld/fonttools_1790702796988/work\njoblib @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_joblib_1788177170/work\nkiwisolver @ file:///Users/runner/miniforge3/conda-bld/bld/rattler-build_kiwisolver_1790082006/work\nlightgbm @ file:///D:/bld/bld/rattler-build_lightgbm_1784518086/work\nmatplotlib==3.11.2\nmunkres==1.1.4\nnarwhals @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_narwhals_1788964134/work\nnumpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1745118938152/work/dist/numpy-2.2.5-cp312-cp312-macosx_11_0_arm64.whl#sha256=0c46cd10014e318032c147afea7ac25ac1e752c79190a67c8d3f8c8981fa67d2\npackaging @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_packaging_1785888127/work\npandas @ file:///Users/runner/miniforge3/conda-bld/pandas_1764614586485/work\npillow @ file:///Users/runner/miniforge3/conda-bld/bld/rattler-build_pillow_1789122697/work\npyparsing @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pyparsing_1790063282/work\npython-dateutil @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_python-dateutil_1751104122/work\npytz @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pytz_1790267633/work\nscikit-learn @ file:///Users/runner/miniforge3/conda-bld/scikit-learn_1757406542027/work/dist/scikit_learn-1.7.2-cp312-cp312-macosx_11_0_arm64.whl#sha256=fa7d60a76e425b084a94f76144627fbc56f12ee89327cd6afbb128d358a4141f\nscipy @ file:///Users/ec2-user/croot/scipy_1776277440986/work/dist/scipy-1.15.3-cp312-cp312-macosx_12_0_arm64.whl#sha256=7cf025562a61449ce66723d1f53a52b3bbddbf4c7416fe8765883b036b50ead7\nsetuptools==84.0.0\nsix @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_six_1753199211/work\nthreadpoolctl @ file:///home/conda/feedstock_root/build_artifacts/threadpoolctl_1789547442801/work\ntornado @ file:///Users/runner/miniforge3/conda-bld/tornado_1789910997880/work\ntzdata @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_python-tzdata_1790159994/work\nunicodedata2 @ file:///Users/runner/miniforge3/conda-bld/unicodedata2_1789928031440/work\nwheel==0.48.0\n",
+    "fingerprint": "a4b854befa3774fe6c429bc6d9fbc56dd4805fc862873749c6b65e6ebbc2392c",
+    "git_commit": "ec78fdb8cbc316c0ab2842d91898f399946477c1",
+    "inputs": {
+      "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+      "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+      "sales_train_validation.csv": "f368e66ed1dbecb48b2cc8fc589bf68b3deddbbb36bf5c88b4d6d0a09b9b6724",
+      "sample_submission.csv": "eb7597afbec367475ef25dc6dbbc009b8faa47fa2107252c72a029e3cdf72343",
+      "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+    }
+  },
+  "source_node": "mac",
+  "stage": "development",
+  "store": "CA_3"
+}

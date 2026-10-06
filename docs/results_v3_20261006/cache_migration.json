@@ -1,0 +1,209 @@
+{
+  "records": [
+    {
+      "kind": "thread_independent_features",
+      "source": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows/features/cutoff_1857/CA_1",
+      "source_checkpoint_sha256": "10346db5cf6ca1564b8db036174db18459776b30be4edcf0fbc1a2b839aa211d",
+      "target": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows_threads12/features/cutoff_1857/CA_1"
+    },
+    {
+      "kind": "thread_independent_features",
+      "source": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows/features/cutoff_1857/CA_2",
+      "source_checkpoint_sha256": "c15b43a5abc4c229b156bafaf65cb710071142e12b2611bdce3aeb14749d51ce",
+      "target": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows_threads12/features/cutoff_1857/CA_2"
+    },
+    {
+      "kind": "thread_independent_features",
+      "source": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows/features/cutoff_1857/TX_1",
+      "source_checkpoint_sha256": "9bdac0133afec3131a0572c6c377dd87534489cd0e6180eba67a0b5a10ddab09",
+      "target": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows_threads12/features/cutoff_1857/TX_1"
+    },
+    {
+      "kind": "thread_independent_features",
+      "source": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows/features/cutoff_1857/TX_2",
+      "source_checkpoint_sha256": "e7324890b2b924104d0069276aaaa1fc92a416fb48832bcb7d1ae263fdba09b2",
+      "target": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows_threads12/features/cutoff_1857/TX_2"
+    },
+    {
+      "kind": "thread_independent_features",
+      "source": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows/features/cutoff_1857/TX_3",
+      "source_checkpoint_sha256": "0b7d2e7c6ae7f85b702beb5487989eaa83b146aa2d371a2b665348cba1ed0c03",
+      "target": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows_threads12/features/cutoff_1857/TX_3"
+    },
+    {
+      "binary_sha256": "9bec2cd944532f5b9b8dafe9093c334542794447e2c9e1ad457dace9cda80d90",
+      "kind": "binary_dataset",
+      "source": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows/selection/cutoff_1857/nonrecursive/CA_1/dataset",
+      "source_checkpoint_sha256": "24dd5d05fc0d47253006b6dd7df1c895df12a32766c3b8f586a1ce833d96831f",
+      "source_construction_threads": 8,
+      "target_training_threads": 12
+    },
+    {
+      "binary_sha256": "f136d5f972c1eba059be4bb0d6d3d9f55ae9017107e5cfcff0e2fc1907749723",
+      "kind": "binary_dataset",
+      "source": "/home/cyangcj/projects/m5-two-machine/experiments/time_validation_v3_two_machine_windows/selection/cutoff_1857/recursive/CA_1/dataset",
+      "source_checkpoint_sha256": "2e6cd416d392012850f0a1331ca19a2ab0b5a9ac97d846efa721bbc62cd392b3",
+      "source_construction_threads": 8,
+      "target_training_threads": 12
+    }
+  ],
+  "semantic_contract": {
+    "code": {
+      "src/1_preprocessing_by_store.py": "c7c5af56df50f4fc7cb9ed370f548073145e220ebee73da416a6480776656456",
+      "src/time_validation/collaborate.py": "706235478dc3703414261e1b359e173eacc86570d6bcb9b5891e88cfabba3a01",
+      "src/time_validation/common.py": "b6deae8403d7274506dc7b21b0fa25c9f96ef1f3c376cbccdab228c0d847c1bf",
+      "src/time_validation/evaluate.py": "54bd237cc34e9a6efdd9a7ef659b60fbda21837efc2326acb2e9e556aef37fa2",
+      "src/time_validation/external_reference_check.py": "86059db616e1fd176c3075e248cc52f7319c67abc70177d793898c5da664db0f",
+      "src/time_validation/features.py": "a566c059c86878ae4436979d41ea0fda6dcee800ceae00115522899977b33de7",
+      "src/time_validation/handoff.py": "a3ca1278638dff485ffeafbffba7225786a64ee4a2c2fa7bb049dd4fac9549d1",
+      "src/time_validation/launch.py": "dd431b1e1fb95b7ec6767d6cbdcba5d17376fc30d1a6522ee9b98971ab3fd28e",
+      "src/time_validation/metrics.py": "bd1cf9719799c9923662774f0f3f4301a3121c13e4cf3488d06c99e9a31f1952",
+      "src/time_validation/model.py": "988bff981858b137cd36574ab764340c54b7094f6f81596857beb193a70c6ab7",
+      "src/time_validation/run.py": "a712977e456bd4727934de86101aea9fc4b69ff576856b5701585ceb93708d9f",
+      "src/time_validation/status.py": "1478783347515b000a17863abce19b45c87732882c971ee3bc1306828dda79e5",
+      "src/time_validation/tests.py": "05d5af118b45437b5aa9008522e12a43a8d5d0573590ee911bbbca6915a18ce2",
+      "src/time_validation/tests_handoff.py": "52768f495148e16e430f16d50a950fa1414dddd33e4cb1197d8a4374f2df0f1f",
+      "src/time_validation/two_machine_smoke.py": "b46bda0f0b8c79a1bc80ef8df0562094dd2a1eda14a36781c41f2033d991a948"
+    },
+    "config": {
+      "early_stopping": {
+        "enabled": false,
+        "stopping_rounds": 100
+      },
+      "ensemble_grid": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "first_day": 1,
+      "horizon": 28,
+      "mode_params": {
+        "nonrecursive": {
+          "min_data_in_leaf": 255,
+          "num_leaves": 255,
+          "seed": 1995
+        },
+        "recursive": {
+          "min_data_in_leaf": 4095,
+          "num_leaves": 2047,
+          "seed": 42
+        }
+      },
+      "modes": [
+        "nonrecursive",
+        "recursive"
+      ],
+      "params": {
+        "boost_from_average": false,
+        "boosting_type": "gbdt",
+        "feature_fraction": 0.5,
+        "force_col_wise": true,
+        "learning_rate": 0.015,
+        "max_bin": 100,
+        "metric": "rmse",
+        "objective": "tweedie",
+        "subsample": 0.5,
+        "subsample_freq": 1,
+        "tweedie_variance_power": 1.1,
+        "verbosity": -1
+      },
+      "prefix_fallback": false,
+      "price_calendar_policy": "Competition-known covariates through cutoff+28 only; weekly price rows restricted to weeks intersecting this range.",
+      "round_candidates": [
+        500,
+        1000,
+        1500,
+        2000,
+        2500,
+        3000
+      ],
+      "round_selection": {
+        "metric": "WRMSSE",
+        "scope": "per_mode_global"
+      },
+      "stages": {
+        "development": {
+          "select_cutoff": 1857,
+          "train_cutoff": 1885
+        },
+        "final": {
+          "train_cutoff": 1941
+        },
+        "test": {
+          "select_cutoff": 1885,
+          "train_cutoff": 1913
+        }
+      },
+      "stores": [
+        "CA_1",
+        "CA_2",
+        "CA_3",
+        "CA_4",
+        "TX_1",
+        "TX_2",
+        "TX_3",
+        "WI_1",
+        "WI_2",
+        "WI_3"
+      ],
+      "zero_scale_policy": "exact prediction -> 0; nonzero MSE -> infinity; zero-weight series contribute 0; zero total revenue fails"
+    },
+    "core_versions": {
+      "lightgbm": "4.7.0",
+      "numpy": "2.2.5",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.7.2",
+      "scipy": "1.15.3"
+    },
+    "inputs": {
+      "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+      "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+      "sales_train_validation.csv": "f368e66ed1dbecb48b2cc8fc589bf68b3deddbbb36bf5c88b4d6d0a09b9b6724",
+      "sample_submission.csv": "eb7597afbec367475ef25dc6dbbc009b8faa47fa2107252c72a029e3cdf72343",
+      "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+    },
+    "plan_id": "m5-v3-two-machine-20261006",
+    "task_plan": {
+      "coordinator": "windows",
+      "nodes": {
+        "mac": {
+          "admission_seconds": {
+            "nonrecursive": 1800,
+            "prepare": 300,
+            "recursive": 3600
+          },
+          "stop_at": "2026-10-06T17:00:00+08:00",
+          "stores": [
+            "CA_3",
+            "CA_4"
+          ],
+          "threads": 4
+        },
+        "windows": {
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "TX_1",
+            "TX_2",
+            "TX_3",
+            "WI_1",
+            "WI_2",
+            "WI_3"
+          ],
+          "threads": 8
+        }
+      },
+      "plan_id": "m5-v3-two-machine-20261006"
+    }
+  },
+  "source_manifest_sha256": "3ddd8f19421acf8a69b95bd16b7d86854de2076f63c487ce04cc815a3173ca42",
+  "target_manifest_sha256": "147c3f266ed3180fe587ff4a53873f1cb67ebaff6d2f573a926baf12a70ec109"
+}

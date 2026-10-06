@@ -1,0 +1,21 @@
+{
+  "candidates": [
+    500,
+    1000,
+    1500,
+    2000,
+    2500,
+    3000
+  ],
+  "metric": "WRMSSE",
+  "rounds_by_mode": {
+    "nonrecursive": 500,
+    "recursive": 500
+  },
+  "scope": "per_mode_global",
+  "select_cutoff": 1857,
+  "wrmsse_by_mode": {
+    "nonrecursive": 0.646046629455712,
+    "recursive": 0.6823765817123744
+  }
+}

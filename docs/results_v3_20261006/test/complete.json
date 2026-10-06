@@ -1,0 +1,47 @@
+{
+  "artifacts": {
+    "cat_id_errors.png": "8f8eda02c302a7b404d0ef63e407846280f4398972d8207c49da29496ed802d5",
+    "ensemble.csv": "9422085ce4d45bcb1a39844ec6028234efd30c85ffaf70c8b63afb0e03529b5e",
+    "ensemble_levels.csv": "b2282cbf387aee2deb9565be87ee0f3dfb5bfd431bf8e3e63a6412a9e4345181",
+    "error_analysis.csv": "e49e972a791324e1c5fc3ded81e065abc5063d132186496ba2253c340618cbef",
+    "horizon_errors.png": "eab20f12d06c9e16a729ab8906ee164a0b71535510562c36ee86e78f10650186",
+    "importance.csv": "ffcda682cfdf6b9a87b5399cf3a895dff8016e4791458137d263ba37a2179e59",
+    "integrity.json": "c93d660e9396ded1a5d80a050a294e6dc2de70bbee01bb219d5c75fa13c1b383",
+    "last_week.csv": "ad3ffa538d40000e9fb433ff3714d4c4ce916cf0a95b3e6c3c2db640b4f2f664",
+    "last_week_levels.csv": "f0731ef61f8bf18ebb04fc2e404db00b8a4e80e0b93428b3f3ff858a0bf10b11",
+    "nonrecursive.csv": "987761b11eb11f02d9439a46aabadac65c374c9c0c01d415d078898772ce8e2f",
+    "nonrecursive_importance.png": "73659d69cca73cdb7bb1a2908425b6835f8b7a1fb3ac204f168a266ab8bfc507",
+    "nonrecursive_levels.csv": "12831674df56742620713066fd7c31af226a5d9e7bbfd4f4476140e47efb89fc",
+    "recursive.csv": "ffaf04419e2d33ad5cccea7ee62f44400aa2d5c27d9836de1496353285c1a358",
+    "recursive_importance.png": "2eac0c5e80c1795b4369abd79202f90ed91cb536332833d15490b961306f9336",
+    "recursive_levels.csv": "e2c257b28b69d2a72e46b78066a217f421056e4372ac521c10b77472d35eadcf",
+    "scores.csv": "9290b9aa34fdf0540559c9908bd24cbc6681646b03bf387e314ca5cb2ead2c14",
+    "store_id_errors.png": "ad2fb60b0c6cffd5e41c9a0a8c1bc7d6570a7d254d449590185f6cf210f97086",
+    "timings.csv": "1c8e227e2c7d4250123e9338fd47b58ac9939bdc275546c95d1b9ed7dd054f3c",
+    "weekday_mean_4weeks.csv": "37d2ee5b3df84083abdd2a5dc9e3c1ead32d278138cdd6b53b460c42f70395e4",
+    "weekday_mean_4weeks_levels.csv": "cb8a81c815ea254fcd59ae1197c8edad0d35b717245d946b11b3176b88bfaed2",
+    "wrmsse.png": "acc034cd3f3d324138d742c4290bd18f3bf41a7ff9e892174fe3dc5d1fcac628"
+  },
+  "days": [
+    1914,
+    1941
+  ],
+  "ensemble_weights": {
+    "nonrecursive": 0.6,
+    "recursive": 0.4
+  },
+  "fingerprint": "3b79aacd8e1d0d3cb267621d74e652297b2999e47175acd99d427c6df297c807",
+  "finite": true,
+  "full_coverage": true,
+  "horizon": 28,
+  "kaggle_file": false,
+  "nonnegative": true,
+  "rounds_by_mode": {
+    "nonrecursive": 1000,
+    "recursive": 500
+  },
+  "rows": 30490,
+  "selection_source": "test",
+  "stores": 10,
+  "unique_ids": true
+}

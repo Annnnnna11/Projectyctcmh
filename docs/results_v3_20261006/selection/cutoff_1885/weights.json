@@ -1,0 +1,49 @@
+{
+  "ensemble_wrmsse": 0.502637407650839,
+  "nonrecursive_weight": 0.6,
+  "prediction_files_sha256": {
+    "nonrecursive": {
+      "CA_1": "a6f232c43879d75de7fbe6dadf12920fc3961cab014c75d0f637d7b393540d1b",
+      "CA_2": "ea510aa4db7df4695eda4018795832ac1c14a1673cd03dac808f2bdf1eeb68b7",
+      "CA_3": "63216be30aa513754e6feadcd9f1e3a79962d8c61b20be44f1a90a6adeed8011",
+      "CA_4": "8247fb0ddd345d86b60375f3e68b3c80643e6c38341ad2853652428fd08f5b98",
+      "TX_1": "42e9fda79ccac4d282595f799bfa01e852ae0d5cc73c715f69b28f5bb965c8cd",
+      "TX_2": "e2f5b4cb6f9938206d55092c08660f87175647940d3ab3519ef00b632697d1e9",
+      "TX_3": "aef24403d84c333cb6350094c1639bf83ac1ffcfecbfdf057c8501ab10ef3e97",
+      "WI_1": "0f02a12e3ed339614e8aa330618bdb7abc38d9315c6364e7d3ffd13847f557bc",
+      "WI_2": "30659de20e39f7567da6b9d659a220628defa6df7228106595fab9eb698cec20",
+      "WI_3": "363521c5e708526f9f41d98f5f44a4470a4775269ec0bf3e0e5f128ac6b5ad92"
+    },
+    "recursive": {
+      "CA_1": "d57d41d49c3adb2f02ae59622d3e7382fb06d902ad39ab57a2ee7938cb3eed98",
+      "CA_2": "77bed2548f213e1472b29e8875b24c3d4d61ee5262fc8929111d8259d1f48d23",
+      "CA_3": "287c70c65f5d9dfb8ce28f6fe701763f4f4649176f0532494b6cd2dfa31c5128",
+      "CA_4": "911172c95e83b55c7f2596fe4af34adbc17e2802be18a1c69163ae5c905e04d1",
+      "TX_1": "f087668a3653f62aa6a8f8959cdf6bd66b83e76963646297aaaa8e26cea0c238",
+      "TX_2": "eeb8e7cc6012d15f49ecad61821ad4c21ca93c5407edc429017aaa79797b6288",
+      "TX_3": "0048fd0ac7a5054517b3b3ccb91eda77fefdd50664095e6ca5ca00133f147331",
+      "WI_1": "f4a1c5e194ca5935c32244706e713b5d1c065fd1c8d2fb8d2aa6a80661dddef8",
+      "WI_2": "150db2b6ebc2aa53710cf8ab9523643faa6b4ad3c9a4a0f5a559581c651d37ce",
+      "WI_3": "edc86ebf5fa87e4f400592d577418be0dc097d5e315d2969158d50a396b5060b"
+    }
+  },
+  "recursive_weight": 0.4,
+  "rounds_by_mode": {
+    "nonrecursive": 1000,
+    "recursive": 500
+  },
+  "select_cutoff": 1885,
+  "weights_grid": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0
+  ]
+}

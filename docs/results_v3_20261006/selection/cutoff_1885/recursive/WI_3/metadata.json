@@ -1,0 +1,22 @@
+{
+  "candidates": [
+    500,
+    1000,
+    1500,
+    2000,
+    2500,
+    3000
+  ],
+  "cap": 3000,
+  "mode": "recursive",
+  "note": "one training to the cap; candidates scored via model.predict(num_iteration=k)",
+  "peak_rss_mb": 5210.2890625,
+  "predict_days": [
+    1886,
+    1913
+  ],
+  "prefix_equivalence": true,
+  "select_cutoff": 1885,
+  "store": "WI_3",
+  "train_rows": 4601297
+}
